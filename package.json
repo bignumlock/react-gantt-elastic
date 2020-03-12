@@ -1,0 +1,93 @@
+{
+  "name": "gantt-elastic",
+  "version": "1.0.1",
+  "description": "Gantt chart. Elastic javascript gantt chart. Vue gantt. Project manager responsive gantt. jquery gantt.",
+  "main": "src/index.tsx",
+  "dependencies": {
+    "dayjs": "^1.8.20",
+    "events": "^3.1.0",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "resize-observer-polyfill": "^1.5.1",
+    "seamless-immutable": "^7.1.4",
+    "ts-invariant": "^0.4.4"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.8.4",
+    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.8.3",
+    "@babel/plugin-proposal-optional-chaining": "^7.8.3",
+    "@babel/plugin-transform-runtime": "^7.8.3",
+    "@babel/preset-env": "^7.8.7",
+    "@babel/preset-react": "^7.8.3",
+    "@babel/preset-typescript": "^7.8.3",
+    "@babel/runtime": "^7.8.4",
+    "@types/lodash": "^4.14.149",
+    "@types/react": "^16.9.22",
+    "@types/react-dom": "^16.9.5",
+    "@types/seamless-immutable": "^7.1.11",
+    "@typescript-eslint/eslint-plugin": "^2.20.0",
+    "@typescript-eslint/parser": "^2.21.0",
+    "awesome-typescript-loader": "^5.2.1",
+    "babel-eslint": "^10.0.3",
+    "babel-jest": "^25.1.0",
+    "babel-loader": "^8.0.6",
+    "css-loader": "^3.4.2",
+    "eslint": "^6.8.0",
+    "eslint-plugin-react": "^7.18.3",
+    "eslint-plugin-react-hooks": "^2.5.0",
+    "html-webpack-plugin": "4.0.0-beta.11",
+    "jest": "^25.1.0",
+    "mini-css-extract-plugin": "^0.9.0",
+    "react-dev-utils": "^10.2.0",
+    "react-test-renderer": "^16.13.0",
+    "style-loader": "^1.1.3",
+    "typescript": "^3.8.2",
+    "webpack": "^4.41.6",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.10.3"
+  },
+  "scripts": {
+    "test": "jest",
+    "xtest": "npx cypress run --browser chrome",
+    "build": "webpack",
+    "dev": "webpack-dev-server --config webpack.dev.js --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/neuronetio/gantt-elastic.git"
+  },
+  "keywords": [
+    "gantt",
+    "gantt js",
+    "gantt chart",
+    "gantt elastic",
+    "javascript gantt",
+    "javascript gantt chart",
+    "jQuery gantt",
+    "vue gantt",
+    "js gantt",
+    "gantt-chart",
+    "responsive",
+    "vue",
+    "vue-gantt",
+    "javascript gantt",
+    "project gantt",
+    "project manger",
+    "responsive gantt",
+    "gantt component",
+    "javascript gantt",
+    "project",
+    "task"
+  ],
+  "author": "Rafal Pospiech <neuronet.io@gmail.com> (https://neuronet.io)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/neuronetio/gantt-elastic/issues"
+  },
+  "homepage": "https://neuronetio.github.io/gantt-elastic/",
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {}
+    }
+  }
+}
