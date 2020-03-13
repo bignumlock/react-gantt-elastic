@@ -5,8 +5,6 @@ const getStyle = (
   fontFamily = "Arial, sans-serif"
 ): DynamicStyle => {
   return {
-    fontSize,
-    fontFamily,
     "main-view": {
       background: "#FFFFFF"
     },

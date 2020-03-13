@@ -20,3 +20,15 @@ export interface CalendarRowText {
 export interface TaskMap {
   [key: string]: Task;
 }
+
+export interface RootTask {
+  id: null;
+  label: "root";
+  children: [];
+  allChildren: [];
+  parents: [];
+  parent: null;
+  dependentOn: [];
+  parentId: null;
+  __root: boolean;
+}

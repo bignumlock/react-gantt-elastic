@@ -9,7 +9,6 @@ import React, {
   useState
 } from "react";
 import Expander from "../Expander";
-import invariant from "ts-invariant";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface TaskListHeaderProps {}
@@ -18,8 +17,6 @@ const TaskListHeader: React.FC<TaskListHeaderProps> = () => {
   const { style, dispatch, taskList, allTasks, calendar, options } = useContext(
     GanttElasticContext
   );
-
-  invariant.warn(calendar.height);
 
   const [resizer] = useState({
     moving: false,

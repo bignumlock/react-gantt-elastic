@@ -51,6 +51,7 @@ const makeTaskTree = (task: Task, tasks: Task[]): Task => {
       if (task.parents.length) {
         task.parents.forEach(parent => current.parents.push(parent));
       }
+      // eslint-disable-next-line no-prototype-builtins
       if (!task.propertyIsEnumerable("__root")) {
         current.parents.push(task.id);
         current.parent = task.id;

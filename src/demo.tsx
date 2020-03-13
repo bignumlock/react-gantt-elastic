@@ -190,7 +190,13 @@ const options = {
     label: "Your project title as html (link or whatever...)",
     html: false
   },
+  scope: {
+    //*
+    before: 21,
+    after: 13
+  },
   taskList: {
+    // display: false,
     columns: [
       {
         id: 1,

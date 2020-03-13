@@ -3,8 +3,8 @@ import {
   DynamicStyle,
   GanttElasticOptions,
   Task,
-  TimeOption,
-  TaskListOption
+  TaskListOption,
+  TimeOption
 } from "./types";
 
 export default React.createContext<{

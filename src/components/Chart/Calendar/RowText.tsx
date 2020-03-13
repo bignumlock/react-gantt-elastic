@@ -11,18 +11,15 @@ export interface CalendarRowTextProps {
 const RowText: React.FC<CalendarRowTextProps> = ({ item, which }) => {
   const { style, scroll } = useContext(GanttElasticContext);
 
-  const rectChildStyle = useMemo(
-    () => ({
+  return useMemo(() => {
+    const rectChildStyle = {
       ...style["calendar-row-rect-child"],
       ...style["calendar-row-rect-child--" + which],
       width: item.width + "px",
       height: item.height + "px"
-    }),
-    [item.height, item.width, style, which]
-  );
+    };
 
-  const textStyle = useMemo(() => {
-    const basicStyle = {
+    const textStyle = {
       ...style["calendar-row-text"],
       ...style["calendar-row-text--" + which]
     };
@@ -47,10 +44,31 @@ const RowText: React.FC<CalendarRowTextProps> = ({ item, which }) => {
           x = item.x + 2;
         }
       }
-      basicStyle.left = x - item.x + "px";
+      textStyle.left = x - item.x + "px";
     }
-    return basicStyle;
+
+    return (
+      <div
+        className={
+          "gantt-elastic__calendar-row-rect-child gantt-elastic__calendar-row-rect-child--" +
+          which
+        }
+        style={rectChildStyle}
+      >
+        <div
+          className={
+            "gantt-elastic__calendar-row-text gantt-elastic__calendar-row-text--" +
+            which
+          }
+          style={textStyle}
+        >
+          {item.label}
+        </div>
+      </div>
+    );
   }, [
+    item.height,
+    item.label,
     item.textWidth,
     item.width,
     item.x,
@@ -59,26 +77,6 @@ const RowText: React.FC<CalendarRowTextProps> = ({ item, which }) => {
     style,
     which
   ]);
-
-  return (
-    <div
-      className={
-        "gantt-elastic__calendar-row-rect-child gantt-elastic__calendar-row-rect-child--" +
-        which
-      }
-      style={rectChildStyle}
-    >
-      <div
-        className={
-          "gantt-elastic__calendar-row-text gantt-elastic__calendar-row-text--" +
-          which
-        }
-        style={textStyle}
-      >
-        {item.label}
-      </div>
-    </div>
-  );
 };
 
 export default RowText;

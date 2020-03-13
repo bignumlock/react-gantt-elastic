@@ -1,7 +1,7 @@
 import GanttElasticContext from "@/GanttElasticContext";
 import { emitEvent } from "@/GanttElasticEvents";
 import { Task, TaskListColumnOption } from "@/types";
-import React, { useCallback, useContext, useMemo } from "react";
+import React, { useContext, useMemo } from "react";
 
 export interface TaskListItemProps {
   task: Task;
@@ -15,30 +15,7 @@ const ItemColumn: React.FC<TaskListItemProps> = ({
 }) => {
   const { style } = useContext(GanttElasticContext);
 
-  /**
-   * Emit event
-   *
-   * @param {Event} event
-   */
-  const onEmitEvent = useCallback(
-    (event: React.MouseEvent | React.TouchEvent) => {
-      const eventName = event.type;
-      if (
-        typeof column.events !== "undefined" &&
-        typeof column.events[eventName] === "function"
-      ) {
-        column.events[eventName]({ event, data: task, column: column });
-      }
-      emitEvent.emit(`taskList-${task.type}-${eventName}`, {
-        event,
-        data: task,
-        column: column
-      });
-    },
-    [task, column]
-  );
-
-  const itemStyles = useMemo(() => {
+  return useMemo(() => {
     const itemColumnStyle = {
       ...style["task-list-item-column"],
       ...column.style["task-list-item-column"],
@@ -58,46 +35,69 @@ const ItemColumn: React.FC<TaskListItemProps> = ({
       ...style["task-list-item-value"],
       ...column.style["task-list-item-value"]
     };
-    return { itemColumnStyle, wrapperStyle, containerStyle, valueStyle };
-  }, [style, column]);
 
-  return (
-    <div
-      className="gantt-elastic__task-list-item-column"
-      style={itemStyles.itemColumnStyle}
-    >
+    /**
+     * Emit event
+     *
+     * @param {Event} event
+     */
+    const onEmitEvent = (event: React.MouseEvent | React.TouchEvent): void => {
+      const eventName = event.type;
+      if (
+        typeof column.events !== "undefined" &&
+        typeof column.events[eventName] === "function"
+      ) {
+        column.events[eventName]({
+          event,
+          data: task,
+          column: column
+        });
+      }
+      emitEvent.emit(`taskList-${task.type}-${eventName}`, {
+        event,
+        data: task,
+        column: column
+      });
+    };
+
+    return (
       <div
-        className="gantt-elastic__task-list-item-value-wrapper"
-        style={itemStyles.wrapperStyle}
+        className="gantt-elastic__task-list-item-column"
+        style={itemColumnStyle}
       >
-        {children}
         <div
-          className="gantt-elastic__task-list-item-value-container"
-          style={itemStyles.containerStyle}
+          className="gantt-elastic__task-list-item-value-wrapper"
+          style={wrapperStyle}
         >
+          {children}
           <div
-            className="gantt-elastic__task-list-item-value"
-            style={itemStyles.valueStyle}
-            onClick={onEmitEvent}
-            onMouseEnter={onEmitEvent}
-            onMouseOver={onEmitEvent}
-            onMouseOut={onEmitEvent}
-            onMouseMove={onEmitEvent}
-            onMouseDown={onEmitEvent}
-            onMouseUp={onEmitEvent}
-            onWheel={onEmitEvent}
-            onTouchStart={onEmitEvent}
-            onTouchMove={onEmitEvent}
-            onTouchEnd={onEmitEvent}
+            className="gantt-elastic__task-list-item-value-container"
+            style={containerStyle}
           >
-            {typeof column.value === "function"
-              ? column.value(task)
-              : task[column.value]}
+            <div
+              className="gantt-elastic__task-list-item-value"
+              style={valueStyle}
+              onClick={onEmitEvent}
+              onMouseEnter={onEmitEvent}
+              onMouseOver={onEmitEvent}
+              onMouseOut={onEmitEvent}
+              onMouseMove={onEmitEvent}
+              onMouseDown={onEmitEvent}
+              onMouseUp={onEmitEvent}
+              onWheel={onEmitEvent}
+              onTouchStart={onEmitEvent}
+              onTouchMove={onEmitEvent}
+              onTouchEnd={onEmitEvent}
+            >
+              {typeof column.value === "function"
+                ? column.value(task)
+                : task[column.value]}
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  }, [style, column, children, task]);
 };
 
 export default ItemColumn;

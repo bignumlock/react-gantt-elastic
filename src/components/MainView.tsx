@@ -40,11 +40,11 @@ const MainView: React.FC<MainViewProps> = () => {
     scrollBarHeight,
     allVisibleTasksHeight,
     taskList,
-    calendar,
-    scroll
+    calendar
+    // scroll
   } = useContext(GanttElasticContext);
 
-  // const [state] = useState({ scrolling: false });
+  const [scroll] = useState({ scrolling: false });
 
   // Chart拖动事件数据，不需要重新渲染页面
   const [mousePos] = useState({
@@ -266,17 +266,19 @@ const MainView: React.FC<MainViewProps> = () => {
             onMouseMove={mouseMove}
             onMouseUp={mouseUp}
           >
-            {options.taskList.display && <div
-              ref={taskListRef}
-              className="gantt-elastic__task-list-container"
-              style={{
-                ...style["task-list-container"],
-                width: taskList.finalWidth + "px",
-                height: height + "px"
-              }}
-            >
-              <TaskList></TaskList>
-            </div>}
+            {options.taskList.display && (
+              <div
+                ref={taskListRef}
+                className="gantt-elastic__task-list-container"
+                style={{
+                  ...style["task-list-container"],
+                  width: taskList.finalWidth + "px",
+                  height: height + "px"
+                }}
+              >
+                <TaskList></TaskList>
+              </div>
+            )}
             <div
               className="gantt-elastic__main-view-container"
               ref={chartContainerRef}

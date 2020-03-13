@@ -2,6 +2,7 @@ import dayjs from "dayjs";
 import _ from "lodash";
 import React, {
   CSSProperties,
+  Reducer,
   useCallback,
   useEffect,
   useMemo,
@@ -10,7 +11,7 @@ import React, {
   useState
 } from "react";
 import ResizeObserver from "resize-observer-polyfill";
-import Immutable from "seamless-immutable";
+import Immutable, { ImmutableObject } from "seamless-immutable";
 import invariant from "ts-invariant";
 import { TaskMap } from "./components/interfaces";
 import MainView from "./components/MainView";
@@ -71,19 +72,20 @@ type State = {
   chartWidth: number;
 } & GanttElasticState;
 
-const reducer: (
-  state: State,
-  action: { type: string; payload: object }
-) => State = (state, action) => {
+const reducer: Reducer<
+  ImmutableObject<State>,
+  { type: string; payload: object }
+> = (state, action) => {
+  const immutableState = Immutable.isImmutable(state)
+    ? state
+    : Immutable(state);
   if (action.type === "scroll") {
     // const scroll = Immutable.merge(state.scroll, );
     // return Immutable.merge(state, { ...action.payload });
   } else if (action.type === "update-calendar-height") {
-    return Immutable.setIn(state, ["calendar", "height"], action.payload);
+    return immutableState.setIn(["calendar", "height"], action.payload);
   }
-  return Immutable.merge(state, action.payload, {
-    deep: true
-  });
+  return immutableState.merge(action.payload, { deep: true });
 };
 
 const GanttElastic: React.FC<GanttElasticProps> = ({
@@ -113,7 +115,11 @@ const GanttElastic: React.FC<GanttElasticProps> = ({
   const [
     { calendar, times, taskList, scroll, chartWidth, ...others },
     dispatch
-  ] = useReducer(reducer, { ...defaultState, chartWidth: 0 }, init => init);
+  ] = useReducer(
+    reducer,
+    Immutable({ ...defaultState, chartWidth: 0 }),
+    init => init
+  );
 
   // refs
   const ganttElastic = useRef<HTMLDivElement>(null);
@@ -123,35 +129,31 @@ const GanttElastic: React.FC<GanttElasticProps> = ({
   /**
    * Initialize Options
    */
-  const options: GanttElasticOptions = useMemo(() => {
-    const options = Immutable.merge(
-      getOptions(userOptions),
+  const options = useMemo(() => {
+    const options = Immutable(getOptions(userOptions)).merge(
       userOptions ?? {},
-      {
-        deep: true // perform a deep merge
-      }
+      { deep: true } // perform a deep merge
     );
 
-    dayjs.locale(options.locale, undefined, true);
+    dayjs.locale(options.locale.asMutable({ deep: true }), undefined, true);
     dayjs.locale(options.locale.name);
     // ****recalculate time variables
     const timePerPixel = calculateTimePerPixel(
       options.times.timeScale,
       options.times.timeZoom
     );
-    return Immutable.setIn(options, ["times", "timePerPixel"], timePerPixel);
+    return options.setIn(["times", "timePerPixel"], timePerPixel);
   }, [userOptions]);
 
   /**
    * Initialize Style
    */
-  const style: DynamicStyle = useMemo(() => {
-    const dynamicStyle: DynamicStyle = Immutable.merge(
-      prepareStyle(userDynamicStyle),
+  const style = useMemo(() => {
+    const dynamicStyle: DynamicStyle = Immutable(
+      prepareStyle(userDynamicStyle)
+    ).merge(
       userDynamicStyle ?? {},
-      {
-        deep: true // perform a deep merge
-      }
+      { deep: true } // perform a deep merge
     );
 
     return dynamicStyle;
@@ -326,7 +328,6 @@ const GanttElastic: React.FC<GanttElasticProps> = ({
       type: "initialize",
       payload: {
         times,
-        // clientWidth,
         chartWidth,
         width: chartWidth,
         calendar: {
@@ -350,7 +351,9 @@ const GanttElastic: React.FC<GanttElasticProps> = ({
 
   // 初始化columns和显示属性的计算
   useEffect(() => {
-    const columns = initialzeColumns(options.taskList.columns);
+    const columns = initialzeColumns(
+      options.taskList.columns.asMutable({ deep: true })
+    );
     const taskListVariables = calculateTaskListColumnsDimensions(
       columns,
       allTasks,
@@ -541,7 +544,7 @@ const GanttElastic: React.FC<GanttElasticProps> = ({
             if (mainView?.current) {
               canvas.width = mainView.current.clientWidth;
               canvas.height = rowsHeight;
-              canvas.getContext("2d").drawImage(img, 0, 0);
+              canvas.getContext("2d")?.drawImage(img, 0, 0);
               resolve(canvas.toDataURL(type));
             }
           };
@@ -582,10 +585,12 @@ const GanttElastic: React.FC<GanttElasticProps> = ({
       chartScrollContainerVertical.current &&
       chartGraph.current.scrollTop !== taskListItems.current.scrollTop
     ) {
-      scroll.top = taskListItems.current.scrollTop = chartScrollContainerVertical.current.scrollTop =
+      taskListItems.current.scrollTop = chartScrollContainerVertical.current.scrollTop =
         chartGraph.current.scrollTop;
+      // scroll.top = taskListItems.current.scrollTop = chartScrollContainerVertical.current.scrollTop =
+      //   chartGraph.current.scrollTop;
     }
-  }, [scroll, refs]);
+  }, [refs]);
 
   /**
    * Scroll chart or task list to specified pixel values
@@ -612,7 +617,7 @@ const GanttElastic: React.FC<GanttElasticProps> = ({
         chartCalendarContainer.current.scrollLeft = left;
         chartGraphContainer.current.scrollLeft = left;
         chartScrollContainerHorizontal.current.scrollLeft = left;
-        scroll.left = left;
+        // scroll.left = left;
       }
       if (
         top !== null &&
@@ -623,14 +628,11 @@ const GanttElastic: React.FC<GanttElasticProps> = ({
         chartScrollContainerVertical.current.scrollTop = top;
         chartGraph.current.scrollTop = top;
         taskListItems.current.scrollTop = top;
-        scroll.top = top;
+        // scroll.top = top;
         syncScrollTop();
       }
-      // setScroll({
-      //   ...scroll
-      // });
     },
-    [refs, scroll, syncScrollTop]
+    [refs, syncScrollTop]
   );
 
   /**
@@ -644,24 +646,48 @@ const GanttElastic: React.FC<GanttElasticProps> = ({
       if (scroll.chart.left === left && scroll.chart.top === top) {
         return;
       }
-
+      const _scroll = {
+        top,
+        left,
+        chart: {
+          left: 0,
+          right: 0,
+          percent: 0,
+          top: 0,
+          time: 0,
+          timeCenter: 0,
+          dateTime: { left: 0, right: 0 }
+        }
+      };
       const { chartContainer, chart } = refs;
       const chartContainerWidth = chartContainer?.current?.clientWidth ?? 0;
-      scroll.chart.left = left;
-      scroll.chart.right = left + chartContainerWidth;
-      scroll.chart.percent = (left / times.totalViewDurationPx) * 100;
-      scroll.chart.top = top;
-      scroll.chart.time = pixelOffsetXToTime(left);
-      scroll.chart.timeCenter = pixelOffsetXToTime(
+      _scroll.chart.left = left;
+      _scroll.chart.right = left + chartContainerWidth;
+      _scroll.chart.percent = (left / times.totalViewDurationPx) * 100;
+      _scroll.chart.top = top;
+      _scroll.chart.time = pixelOffsetXToTime(left);
+      _scroll.chart.timeCenter = pixelOffsetXToTime(
         left + chartContainerWidth / 2
       );
-      scroll.chart.dateTime.left = dayjs(scroll.chart.time).valueOf();
-      scroll.chart.dateTime.right = dayjs(
+      _scroll.chart.dateTime.left = dayjs(_scroll.chart.time).valueOf();
+      _scroll.chart.dateTime.right = dayjs(
         pixelOffsetXToTime(left + chart?.current?.clientWidth)
       ).valueOf();
+      _scroll.top = top;
+      _scroll.left = left;
+
+      dispatch({ type: "", payload: { scroll: _scroll } });
+
       scrollTo(left, top);
     },
-    [pixelOffsetXToTime, refs, scroll, scrollTo, times.totalViewDurationPx]
+    [
+      pixelOffsetXToTime,
+      refs,
+      scroll.chart.left,
+      scroll.chart.top,
+      scrollTo,
+      times.totalViewDurationPx
+    ]
   );
 
   /**
@@ -779,6 +805,12 @@ const GanttElastic: React.FC<GanttElasticProps> = ({
 
   invariant.warn("visibleTasks", visibleTasks);
 
+  // 渲染时跳转到当前时间
+  const render = times && times.steps && times.steps.length > 0;
+  useEffect(() => {
+    render && scrollToTime(new Date().getTime());
+  }, [render, scrollToTime]);
+
   return (
     <GanttElasticContext.Provider
       value={{
@@ -814,7 +846,7 @@ const GanttElastic: React.FC<GanttElasticProps> = ({
         ref={ganttElastic}
       >
         {header}
-        {visibleTasks && visibleTasks.length > 0 && <MainView />}
+        {render && <MainView />}
         {children}
         {footer}
       </div>
