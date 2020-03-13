@@ -1,13 +1,18 @@
 import React from "react";
-import { DynamicStyle, Options, Task, TimeOption } from "./types";
+import {
+  DynamicStyle,
+  GanttElasticOptions,
+  Task,
+  TimeOption,
+  TaskListOption
+} from "./types";
 
-interface ContextType {
+export default React.createContext<{
   style: DynamicStyle;
-  ctx?: CanvasRenderingContext2D | null;
-  options: Options;
+  options: GanttElasticOptions;
   allTasks: Task[];
   visibleTasks: Task[];
   times: TimeOption;
-}
 
-export default React.createContext<ContextType>({});
+  taskList: TaskListOption;
+}>({});

@@ -116,6 +116,7 @@ const TaskListHeader: React.FC<TaskListHeaderProps> = () => {
                     allTasks,
                     task => task.allChildren.length > 0
                   )}
+                  options={options.taskList.expander}
                 ></Expander>
               )}
               <div

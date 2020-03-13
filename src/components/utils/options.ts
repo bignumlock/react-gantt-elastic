@@ -31,13 +31,13 @@ const defaultColumns: TaskListColumnOption[] = [
 ];
 
 const defaultOptions: GanttElasticOptions = {
-  width: 0,
-  height: 0,
-  clientWidth: 0,
-  outerHeight: 0,
-  rowsHeight: 0,
-  scrollBarHeight: 0,
-  allVisibleTasksHeight: 0,
+  // width: 0,
+  // height: 0,
+  // clientWidth: 0,
+  // outerHeight: 0,
+  // rowsHeight: 0,
+  // scrollBarHeight: 0,
+  // allVisibleTasksHeight: 0,
   scroll: {
     dragXMoveMultiplier: 3, //*
     dragYMoveMultiplier: 2 //*

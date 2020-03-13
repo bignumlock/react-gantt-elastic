@@ -1,6 +1,6 @@
 import GanttElasticContext from "@/GanttElasticContext";
 import { emitEvent } from "@/GanttElasticEvents";
-import { Task } from "@/types";
+import { Task, ChartExpanderOption, TaskListExpanderOption } from "@/types";
 import _ from "lodash";
 import React, { useContext, useMemo, useState } from "react";
 
@@ -34,16 +34,12 @@ function getClassPrefix(type: string, full = true): string {
 
 export interface ExpanderProps {
   type: string;
+  options: ChartExpanderOption & TaskListExpanderOption;
   tasks: Array<Task>;
 }
 
-const Expander: React.FC<ExpanderProps> = ({ type, tasks }) => {
-  const {
-    style,
-    options: { taskList },
-    dispatch
-  } = useContext(GanttElasticContext);
-  const { expander } = taskList;
+const Expander: React.FC<ExpanderProps> = ({ type, tasks, options }) => {
+  const { style, dispatch } = useContext(GanttElasticContext);
 
   const [state] = useState({
     border: 0.5,
@@ -85,17 +81,15 @@ const Expander: React.FC<ExpanderProps> = ({ type, tasks }) => {
     return { collapsed, toggle, allChildren };
   }, [tasks]);
 
-  const fullClassPrefix = getClassPrefix(expander.type);
-  const notFullClassPrefix = getClassPrefix(expander.type, false);
+  const fullClassPrefix = getClassPrefix(options.type);
+  const notFullClassPrefix = getClassPrefix(options.type, false);
 
   const taskListStyle =
     type !== "taskList"
       ? {}
       : {
           paddingLeft:
-            tasks[0]?.parents.length * expander.padding +
-            expander.margin +
-            "px",
+            tasks[0]?.parents.length * options.padding + options.margin + "px",
           margin: "auto 0"
         };
 
@@ -111,8 +105,8 @@ const Expander: React.FC<ExpanderProps> = ({ type, tasks }) => {
         <svg
           className={fullClassPrefix + "-content"}
           style={{ ...style[notFullClassPrefix + "-content"] }}
-          width={expander.size}
-          height={expander.size}
+          width={options.size}
+          height={options.size}
           onClick={toggle}
         >
           <rect
@@ -123,8 +117,8 @@ const Expander: React.FC<ExpanderProps> = ({ type, tasks }) => {
             }}
             x={state.border}
             y={state.border}
-            width={expander.size - state.border * 2}
-            height={expander.size - state.border * 2}
+            width={options.size - state.border * 2}
+            height={options.size - state.border * 2}
             rx="2"
             ry="2"
           ></rect>
@@ -132,18 +126,18 @@ const Expander: React.FC<ExpanderProps> = ({ type, tasks }) => {
             className={fullClassPrefix + "-line"}
             style={{ ...style[notFullClassPrefix + "-line"] }}
             x1={state.lineOffset}
-            y1={expander.size / 2}
-            x2={expander.size - state.lineOffset}
-            y2={expander.size / 2}
+            y1={options.size / 2}
+            x2={options.size - state.lineOffset}
+            y2={options.size / 2}
           ></line>
           {collapsed && (
             <line
               className={fullClassPrefix + "-line"}
               style={{ ...style[notFullClassPrefix + "-line"] }}
-              x1={expander.size / 2}
+              x1={options.size / 2}
               y1={state.lineOffset}
-              x2={expander.size / 2}
-              y2={expander.size - state.lineOffset}
+              x2={options.size / 2}
+              y2={options.size - state.lineOffset}
             ></line>
           )}
         </svg>

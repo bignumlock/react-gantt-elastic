@@ -1,18 +1,12 @@
 import dayjs from "dayjs";
 
-// export interface TimeOption {
-//   timeScale: number;
-//   timeZoom: number; //*
-//   timePerPixel: number;
-//   firstTime: number;
-//   lastTime: number;
-//   firstTaskTime: dayjs.ConfigType | undefined;
-//   lastTaskTime: dayjs.ConfigType | undefined;
-//   totalViewDurationMs: number;
-//   totalViewDurationPx: number;
-//   stepDuration: dayjs.UnitType;
-//   steps: StepOption[];
-// }
+export interface TimeOption {
+  firstTime: number;
+  lastTime: number;
+  totalViewDurationMs: number;
+  totalViewDurationPx: number;
+  steps: StepOption[];
+}
 
 // export interface ChartOption {
 //   grid: {
@@ -68,27 +62,35 @@ import dayjs from "dayjs";
 //   };
 // }
 
-// export interface TaskListOption {
-//   display: boolean; //*
-//   resizeAfterThreshold: boolean; //*
-//   widthThreshold: number; //*
-//   columns: TaskListColumnOption[]; //*;
-//   percent: number; //*
-//   width: number;
-//   finalWidth: number;
-//   widthFromPercentage: number;
-//   minWidth: number;
-//   expander: TaskListExpanderOption;
-// }
+export interface TaskListOption {
+  display: boolean; //*
+  resizeAfterThreshold: boolean; //*
+  widthThreshold: number; //*
+  columns: TaskListColumnOption[]; //*;
+  percent: number; //*
+  width: number;
+  finalWidth: number;
+  widthFromPercentage: number;
+  minWidth: number;
+  expander: TaskListExpanderOption;
+}
 
-// export interface TaskListExpanderOption {
-//   type: string;
-//   size: number;
-//   columnWidth: number;
-//   padding: number;
-//   margin: number;
-//   straight: boolean;
-// }
+export interface TaskListExpanderOption {
+  type: string;
+  size: number;
+  columnWidth: number;
+  padding: number;
+  margin: number;
+  straight: boolean;
+}
+
+export interface ChartExpanderOption {
+  type: string;
+  display: boolean; //*
+  displayIfTaskListHidden: boolean; //*
+  offset: number; //*
+  size: number;
+}
 
 // export interface CalendarOption {
 //   workingDays: number[]; //*
@@ -372,13 +374,7 @@ export interface GanttElasticOptions {
       xPadding: number; //*
       display: boolean; //*
     };
-    expander: {
-      type: string;
-      display: boolean; //*
-      displayIfTaskListHidden: boolean; //*
-      offset: number; //*
-      size: number;
-    };
+    expander: ChartExpanderOption;
   };
   taskList: {
     display: boolean; //*

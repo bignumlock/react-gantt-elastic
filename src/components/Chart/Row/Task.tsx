@@ -66,7 +66,11 @@ const ChartTask: React.FC<TaskProps> = ({ task }) => {
             width={options.chart.expander.size}
             height={options.chart.expander.size}
           >
-            <Expander tasks={[task]} type="chart"></Expander>
+            <Expander
+              tasks={[task]}
+              type="chart"
+              options={options.chart.expander}
+            ></Expander>
           </foreignObject>
         )}
       </>

@@ -10,14 +10,20 @@ export interface TaskListItemProps {
 }
 
 const TaskListItem: React.FC<TaskListItemProps> = ({ task }) => {
-  const { style, taskList } = useContext(GanttElasticContext);
+  const { style, options, taskList } = useContext(GanttElasticContext);
 
   const renderColunms = useMemo(() => {
     const tasks = [task];
 
     return _.map(taskList.columns, (column, index) => (
       <ItemColumn task={task} column={column} key={`${column.id}-${index}`}>
-        {column.expander && <Expander tasks={tasks} type="taskList"></Expander>}
+        {column.expander && (
+          <Expander
+            tasks={tasks}
+            type="taskList"
+            options={options.taskList.expander}
+          ></Expander>
+        )}
       </ItemColumn>
     ));
   }, [task, taskList.columns]);

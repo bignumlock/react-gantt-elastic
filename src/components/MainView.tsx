@@ -266,7 +266,7 @@ const MainView: React.FC<MainViewProps> = () => {
             onMouseMove={mouseMove}
             onMouseUp={mouseUp}
           >
-            <div
+            {options.taskList.display && <div
               ref={taskListRef}
               className="gantt-elastic__task-list-container"
               style={{
@@ -276,7 +276,7 @@ const MainView: React.FC<MainViewProps> = () => {
               }}
             >
               <TaskList></TaskList>
-            </div>
+            </div>}
             <div
               className="gantt-elastic__main-view-container"
               ref={chartContainerRef}

@@ -8,7 +8,7 @@ module.exports = [
     optimization: {
       minimize: false
     },
-    entry: "./src/index.tsx",
+    entry: "./src/GanttElastic.tsx",
     output: {
       filename: "GanttElastic.js",
       // eslint-disable-next-line no-undef
@@ -56,7 +56,7 @@ module.exports = [
         })
       ]
     },
-    entry: "./src/index.tsx",
+    entry: "./src/GanttElastic.tsx",
     output: {
       filename: "GanttElastic.min.js",
       // eslint-disable-next-line no-undef
