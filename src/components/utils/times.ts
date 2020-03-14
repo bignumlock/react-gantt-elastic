@@ -1,13 +1,12 @@
+import { DateFormat, DynamicStyle } from "@/types";
+import dayjs from "dayjs";
 import {
   CalendarItemWidths,
-  DateFormat,
-  DynamicStyle,
+  CalendarRowItems,
   Formatted,
-  GanttElasticOptions,
+  Options,
   StepOption
-} from "@/types";
-import dayjs from "dayjs";
-import { CalendarRowItems } from "../interfaces";
+} from "../interfaces";
 
 export interface DateCount {
   count: number;
@@ -160,15 +159,6 @@ const computeHourWidths: (
   maxWidths: CalendarItemWidths;
   formatted: Formatted;
 } = (hourFormats, localeName, style, ctx) => {
-  //
-  const baseStyle = {
-    ...style["calendar-row-text"],
-    ...style["calendar-row-text--hour"]
-  };
-  ctx.font = baseStyle["fontSize"] + " " + baseStyle["fontFamily"];
-
-  let currentDate = dayjs("2020-01-01T00:00:00").locale(localeName); // any date will be good for hours
-
   const widths: CalendarItemWidths[] = [];
   const maxWidths: CalendarItemWidths = {};
   const formatted: Formatted = {
@@ -176,24 +166,35 @@ const computeHourWidths: (
     medium: [],
     short: []
   };
-  // Initialize maxWidths
-  for (const formatName in hourFormats) {
-    maxWidths[formatName] = 0;
-  }
-  // 计算Hour文本显示宽度
-  for (let hour = 0; hour < 24; hour++) {
-    const width: CalendarItemWidths = { hour };
+  if (ctx) {
+    //
+    const baseStyle = {
+      ...style["calendar-row-text"],
+      ...style["calendar-row-text--hour"]
+    };
+    ctx.font = baseStyle["fontSize"] + " " + baseStyle["fontFamily"];
+
+    let currentDate = dayjs("2020-01-01T00:00:00").locale(localeName); // any date will be good for hours
+
+    // Initialize maxWidths
     for (const formatName in hourFormats) {
-      const hourFormatted = hourFormats[formatName](currentDate);
-      width[formatName] = ctx.measureText(hourFormatted).width;
-      formatted[formatName].push(hourFormatted);
-      // Calculate maxWidths
-      if (width[formatName] > maxWidths[formatName]) {
-        maxWidths[formatName] = width[formatName];
-      }
+      maxWidths[formatName] = 0;
     }
-    widths.push(width);
-    currentDate = currentDate.add(1, "hour");
+    // 计算Hour文本显示宽度
+    for (let hour = 0; hour < 24; hour++) {
+      const width: CalendarItemWidths = { hour };
+      for (const formatName in hourFormats) {
+        const hourFormatted = hourFormats[formatName](currentDate);
+        width[formatName] = ctx.measureText(hourFormatted).width;
+        formatted[formatName].push(hourFormatted);
+        // Calculate maxWidths
+        if (width[formatName] > maxWidths[formatName]) {
+          maxWidths[formatName] = width[formatName];
+        }
+      }
+      widths.push(width);
+      currentDate = currentDate.add(1, "hour");
+    }
   }
   return { widths, maxWidths, formatted };
 };
@@ -217,37 +218,38 @@ const computeDayWidths: (
   widths: CalendarItemWidths[];
   maxWidths: CalendarItemWidths;
 } = (steps, dayFormats, localeName, style, ctx) => {
-  //
-  const baseStyle = {
-    ...style["calendar-row-text"],
-    ...style["calendar-row-text--day"]
-  };
-  ctx.font = baseStyle["fontSize"] + " " + baseStyle["fontFamily"];
-
-  let currentDate = dayjs(steps[0].time).locale(localeName);
-
   const widths: CalendarItemWidths[] = [];
   const maxWidths: CalendarItemWidths = {};
-  // Initialize maxWidths
-  for (const formatName in dayFormats) {
-    maxWidths[formatName] = 0;
-  }
-  // 计算Day文本显示宽度
-  for (let day = 0, daysLen = steps.length; day < daysLen; day++) {
-    const width: CalendarItemWidths = { day };
-    for (const formatName in dayFormats) {
-      width[formatName] = ctx.measureText(
-        dayFormats[formatName](currentDate)
-      ).width;
-      // Calculate maxWidths
-      if (width[formatName] > maxWidths[formatName]) {
-        maxWidths[formatName] = width[formatName];
-      }
-    }
-    widths.push(width);
-    currentDate = currentDate.add(1, "day");
-  }
+  if (ctx) {
+    //
+    const baseStyle = {
+      ...style["calendar-row-text"],
+      ...style["calendar-row-text--day"]
+    };
+    ctx.font = baseStyle["fontSize"] + " " + baseStyle["fontFamily"];
 
+    let currentDate = dayjs(steps[0].time).locale(localeName);
+
+    // Initialize maxWidths
+    for (const formatName in dayFormats) {
+      maxWidths[formatName] = 0;
+    }
+    // 计算Day文本显示宽度
+    for (let day = 0, daysLen = steps.length; day < daysLen; day++) {
+      const width: CalendarItemWidths = { day };
+      for (const formatName in dayFormats) {
+        width[formatName] = ctx.measureText(
+          dayFormats[formatName](currentDate)
+        ).width;
+        // Calculate maxWidths
+        if (width[formatName] > maxWidths[formatName]) {
+          maxWidths[formatName] = width[formatName];
+        }
+      }
+      widths.push(width);
+      currentDate = currentDate.add(1, "day");
+    }
+  }
   return { widths, maxWidths };
 };
 
@@ -299,39 +301,40 @@ const computeMonthWidths = (
   style: DynamicStyle,
   ctx: CanvasRenderingContext2D | null
 ): { widths: CalendarItemWidths[]; maxWidths: CalendarItemWidths } => {
-  const baseStyle = {
-    ...style["calendar-row-text"],
-    ...style["calendar-row-text--month"]
-  };
-  ctx.font = baseStyle["fontSize"] + " " + baseStyle["fontFamily"];
-
-  let currentDate = dayjs(firstTime).locale(localeName);
-  const count = getMonthsCount(firstTime, lastTime);
-
   const widths: CalendarItemWidths[] = [];
   const maxWidths: CalendarItemWidths = {};
-  // Initialize maxWidths
-  for (const formatName in monthFormats) {
-    maxWidths[formatName] = 0;
-  }
-  // 计算Month文本显示宽度
-  for (let month = 0; month < count; month++) {
-    const width: CalendarItemWidths = {
-      month
+  if (ctx) {
+    const baseStyle = {
+      ...style["calendar-row-text"],
+      ...style["calendar-row-text--month"]
     };
-    for (const formatName in monthFormats) {
-      width[formatName] = ctx.measureText(
-        monthFormats[formatName](currentDate)
-      ).width;
-      // Calculate maxWidths
-      if (width[formatName] > maxWidths[formatName]) {
-        maxWidths[formatName] = width[formatName];
-      }
-    }
-    widths.push(width);
-    currentDate = currentDate.add(1, "month");
-  }
+    ctx.font = baseStyle["fontSize"] + " " + baseStyle["fontFamily"];
 
+    let currentDate = dayjs(firstTime).locale(localeName);
+    const count = getMonthsCount(firstTime, lastTime);
+
+    // Initialize maxWidths
+    for (const formatName in monthFormats) {
+      maxWidths[formatName] = 0;
+    }
+    // 计算Month文本显示宽度
+    for (let month = 0; month < count; month++) {
+      const width: CalendarItemWidths = {
+        month
+      };
+      for (const formatName in monthFormats) {
+        width[formatName] = ctx.measureText(
+          monthFormats[formatName](currentDate)
+        ).width;
+        // Calculate maxWidths
+        if (width[formatName] > maxWidths[formatName]) {
+          maxWidths[formatName] = width[formatName];
+        }
+      }
+      widths.push(width);
+      currentDate = currentDate.add(1, "month");
+    }
+  }
   return { widths, maxWidths };
 };
 
@@ -462,7 +465,7 @@ const calculateCalendarDimensions = (
   hours: CalendarRowItems[],
   days: CalendarRowItems[],
   months: CalendarRowItems[],
-  options: GanttElasticOptions
+  options: Options
 ): number => {
   let height = 0;
   if (options.calendar.hour.display && hours && hours.length > 0) {

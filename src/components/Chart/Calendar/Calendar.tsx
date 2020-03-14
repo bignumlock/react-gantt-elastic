@@ -280,41 +280,61 @@ const Calendar: React.FC<CalendarProps> = () => {
     times.steps
   ]);
 
-  const height = calculateCalendarDimensions(hours, days, months, options);
-  if (calendar.height !== height) {
-    invariant.warn(`set calendar's height:${height}`);
-    dispatch({
-      type: "update-calendar-height",
-      payload: height
-    });
-  }
+  useMemo(() => {
+    const height = calculateCalendarDimensions(
+      hours,
+      days,
+      months,
+      options.asMutable({ deep: true })
+    );
+    if (calendar.height !== height) {
+      invariant.warn(`set calendar's height:${height}`);
+      dispatch &&
+        dispatch({
+          type: "update-calendar-height",
+          payload: height
+        });
+    }
+  }, [calendar.height, days, dispatch, hours, months, options]);
 
-  return (
-    <div
-      className="gantt-elastic__calendar-wrapper"
-      style={{
-        ...style["calendar-wrapper"],
-        width: fullWidth + "px"
-      }}
-    >
+  return useMemo(
+    () => (
       <div
-        className="gantt-elastic__calendar"
+        className="gantt-elastic__calendar-wrapper"
         style={{
-          ...style["calendar"],
+          ...style["calendar-wrapper"],
           width: fullWidth + "px"
         }}
       >
-        {options.calendar.month.display && (
-          <CalendarRow items={months} which="month" />
-        )}
-        {options.calendar.day.display && (
-          <CalendarRow items={days} which="day" />
-        )}
-        {options.calendar.hour.display && (
-          <CalendarRow items={hours} which="hour" />
-        )}
+        <div
+          className="gantt-elastic__calendar"
+          style={{
+            ...style["calendar"],
+            width: fullWidth + "px"
+          }}
+        >
+          {options.calendar.month.display && (
+            <CalendarRow items={months} which="month" />
+          )}
+          {options.calendar.day.display && (
+            <CalendarRow items={days} which="day" />
+          )}
+          {options.calendar.hour.display && (
+            <CalendarRow items={hours} which="hour" />
+          )}
+        </div>
       </div>
-    </div>
+    ),
+    [
+      days,
+      hours,
+      months,
+      fullWidth,
+      options.calendar.day.display,
+      options.calendar.hour.display,
+      options.calendar.month.display,
+      style
+    ]
   );
 };
 

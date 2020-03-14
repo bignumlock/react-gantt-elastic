@@ -1,7 +1,7 @@
 import GanttElasticContext from "@/GanttElasticContext";
 import { emitEvent } from "@/GanttElasticEvents";
-import { Task, TaskListColumnOption } from "@/types";
 import React, { useContext, useMemo } from "react";
+import { Task, TaskListColumnOption } from "../interfaces";
 
 export interface TaskListItemProps {
   task: Task;

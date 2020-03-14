@@ -25,46 +25,41 @@ const TaskList: React.FC<TaskListProps> = () => {
     refs.taskListItems = taskListItemsRef;
   }, [refs]);
 
-  const renderTaskListItems = useMemo(() => {
-    return (
-      <>
-        {_.map(visibleTasks, task => (
-          <TaskListItem task={task} key={task.id}></TaskListItem>
-        ))}
-      </>
-    );
-  }, [visibleTasks]);
-
-  return (
-    <div
-      className="gantt-elastic__task-list-wrapper"
-      ref={taskListWrapperRef}
-      style={{
-        ...style["task-list-wrapper"],
-        width: "100%",
-        height: "100%"
-      }}
-    >
+  return useMemo(
+    () => (
       <div
-        className="gantt-elastic__task-list"
+        className="gantt-elastic__task-list-wrapper"
+        ref={taskListWrapperRef}
         style={{
-          ...style["task-list"]
+          ...style["task-list-wrapper"],
+          width: "100%",
+          height: "100%"
         }}
-        ref={taskListRef}
       >
-        <TaskListHeader></TaskListHeader>
         <div
-          className="gantt-elastic__task-list-items"
-          ref={taskListItemsRef}
+          className="gantt-elastic__task-list"
           style={{
-            ...style["task-list-items"],
-            height: rowsHeight + "px"
+            ...style["task-list"]
           }}
+          ref={taskListRef}
         >
-          {renderTaskListItems}
+          <TaskListHeader></TaskListHeader>
+          <div
+            className="gantt-elastic__task-list-items"
+            ref={taskListItemsRef}
+            style={{
+              ...style["task-list-items"],
+              height: rowsHeight + "px"
+            }}
+          >
+            {_.map(visibleTasks, task => (
+              <TaskListItem task={task} key={task.id}></TaskListItem>
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+    ),
+    [rowsHeight, style, visibleTasks]
   );
 };
 

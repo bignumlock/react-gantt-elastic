@@ -1,12 +1,22 @@
-import { GanttElasticTask, Task } from "@/types";
+import { GanttElasticTask } from "@/types";
 import dayjs from "dayjs";
 import _ from "lodash";
+import { Task } from "../interfaces";
 
 /**
  * Fill out empty task properties and make it reactive
  */
-const fillTasks = (_task: GanttElasticTask): Task => {
+const fillTasks = (inTask: Partial<GanttElasticTask>): Task => {
   const task: Task = {
+    id: 0,
+    type: "task",
+    startTime: 0,
+    endTime: 0,
+    start: 0,
+    label: "task",
+    progress: 0,
+    end: 0,
+    duration: 0,
     children: [],
     allChildren: [],
     parents: [],
@@ -21,18 +31,21 @@ const fillTasks = (_task: GanttElasticTask): Task => {
     width: 0,
     y: 0,
     x: 0,
-    ..._task
+    ...inTask
   };
 
-  if (typeof task.startTime === "undefined") {
+  if (_.isEmpty(task.parentId)) {
+    task.parentId = 0;
+  }
+  if (_.isEmpty(task.startTime)) {
     task.startTime = dayjs(task.start).valueOf();
   }
-  if (typeof task.endTime === "undefined") {
+  if (_.isEmpty(task.endTime) && task.end) {
     task.endTime = dayjs(task.end).valueOf();
-  } else if (typeof task.endTime === "undefined" && task.duration) {
+  } else if (_.isEmpty(task.endTime) && task.duration) {
     task.endTime = task.startTime + task.duration;
   }
-  if (typeof task.duration === "undefined") {
+  if (_.isEmpty(task.duration) && task.endTime) {
     task.duration = task.endTime - task.startTime;
   }
   return task;
@@ -47,6 +60,7 @@ const fillTasks = (_task: GanttElasticTask): Task => {
 const makeTaskTree = (task: Task, tasks: Task[]): Task => {
   for (let i = 0, len = tasks.length; i < len; i++) {
     let current = tasks[i];
+    // 当taskId是空时，task时rootTask，如果parentId也是空时，则应该时rootTask的子元素
     if (current.parentId === task.id) {
       if (task.parents.length) {
         task.parents.forEach(parent => current.parents.push(parent));

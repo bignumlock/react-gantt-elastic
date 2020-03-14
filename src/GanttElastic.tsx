@@ -1,53 +1,20 @@
 import dayjs from "dayjs";
 import _ from "lodash";
-import React, {
-  CSSProperties,
-  Reducer,
-  useCallback,
-  useEffect,
-  useMemo,
-  useReducer,
-  useRef,
-  useState
-} from "react";
+import React, { CSSProperties, Reducer, useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import ResizeObserver from "resize-observer-polyfill";
 import Immutable, { ImmutableObject } from "seamless-immutable";
 import invariant from "ts-invariant";
-import { TaskMap } from "./components/interfaces";
+import { GanttElasticRefs, State, Task, TaskMap } from "./components/interfaces";
 import MainView from "./components/MainView";
 import { timeToPixelOffsetX } from "./components/utils/charts";
-import {
-  calculateTaskListColumnsDimensions,
-  initialzeColumns
-} from "./components/utils/columns";
+import { calculateTaskListColumnsDimensions, initialzeColumns } from "./components/utils/columns";
 import { defaultState, getOptions } from "./components/utils/options";
 import { prepareStyle } from "./components/utils/style";
-import {
-  fillTasks,
-  getHeight,
-  getTasksHeight,
-  makeTaskTree,
-  recalculateTasks
-} from "./components/utils/tasks";
-import {
-  calculateSteps,
-  calculateTimePerPixel,
-  calculateTotalViewDurationMs,
-  calculateTotalViewDurationPx,
-  calculateWidth,
-  computeDayWidths,
-  computeHourWidths,
-  computeMonthWidths
-} from "./components/utils/times";
+import { fillTasks, getHeight, getTasksHeight, makeTaskTree, recalculateTasks } from "./components/utils/tasks";
+import { calculateSteps, calculateTimePerPixel, calculateTotalViewDurationMs, calculateTotalViewDurationPx, calculateWidth, computeDayWidths, computeHourWidths, computeMonthWidths } from "./components/utils/times";
 import GanttElasticContext from "./GanttElasticContext";
 import { emitEvent } from "./GanttElasticEvents";
-import {
-  DynamicStyle,
-  GanttElasticOptions,
-  GanttElasticState,
-  GanttElasticTask,
-  Task
-} from "./types";
+import { DynamicStyle, GanttElasticOptions, GanttElasticTask } from "./types";
 
 const ctx = document.createElement("canvas").getContext("2d");
 
@@ -61,19 +28,19 @@ export interface GanttElasticProps extends ComponentProps {
   // 如果没有设置开始时间和结束时间，通过计算tasks的最小开始时间和最大结束时间作为Chart显示时间范围
   // firstTime?: dayjs.ConfigType | undefined; // Gantt图开始时间
   // lastTime?: dayjs.ConfigType | undefined; // Gantt图结束时间
-  tasks: GanttElasticTask[];
   // columns: Array<GanttElasticTaskListColumn>;
-  options?: GanttElasticOptions;
+  tasks: Partial<GanttElasticTask>[];
+  options?: Partial<GanttElasticOptions>;
   dynamicStyle?: DynamicStyle;
 }
 
-type State = {
+type GanttElasticState = {
   resizeObserver?: ResizeObserver;
   chartWidth: number;
-} & GanttElasticState;
+} & State;
 
 const reducer: Reducer<
-  ImmutableObject<State>,
+  ImmutableObject<GanttElasticState>,
   { type: string; payload: object }
 > = (state, action) => {
   const immutableState = Immutable.isImmutable(state)
@@ -98,19 +65,7 @@ const GanttElastic: React.FC<GanttElasticProps> = ({
   children
 }) => {
   // refs
-  const [{ refs }] = useState<{
-    refs: {
-      taskListItems?: React.RefObject<HTMLDivElement>;
-      chartGraph?: React.RefObject<HTMLDivElement>;
-      chartCalendarContainer?: React.RefObject<HTMLDivElement>;
-      chartGraphContainer?: React.RefObject<HTMLDivElement>;
-      chartScrollContainerVertical?: React.RefObject<HTMLDivElement>;
-      chartScrollContainerHorizontal?: React.RefObject<HTMLDivElement>;
-      mainView?: React.RefObject<HTMLDivElement>;
-      chartContainer?: React.RefObject<HTMLDivElement>;
-      chart?: React.RefObject<HTMLDivElement>;
-    };
-  }>({ refs: {} });
+  const [refs] = useState<GanttElasticRefs>({});
 
   const [
     { calendar, times, taskList, scroll, chartWidth, ...others },
@@ -181,7 +136,7 @@ const GanttElastic: React.FC<GanttElasticProps> = ({
 
     const taskTree = makeTaskTree(
       {
-        id: null,
+        id: 0,
         label: "root",
         start: 0,
         startTime: 0,
@@ -202,7 +157,9 @@ const GanttElastic: React.FC<GanttElasticProps> = ({
         width: 0,
         y: 0,
         x: 0,
-        __root: true
+        __root: true,
+        style: {},
+        dependencyLines: []
       },
       newTasks
     );
@@ -803,8 +760,6 @@ const GanttElastic: React.FC<GanttElasticProps> = ({
     };
   }, [onScrollChart, onWheelChart]);
 
-  invariant.warn("visibleTasks", visibleTasks);
-
   // 渲染时跳转到当前时间
   const render = times && times.steps && times.steps.length > 0;
   useEffect(() => {
@@ -821,7 +776,6 @@ const GanttElastic: React.FC<GanttElasticProps> = ({
         dispatch,
         isTaskVisible,
         getTask,
-        scrollToTime,
         visibleTasks,
         allTasks,
         height,

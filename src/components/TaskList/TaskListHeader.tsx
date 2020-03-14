@@ -9,17 +9,22 @@ import React, {
   useState
 } from "react";
 import Expander from "../Expander";
+import { TaskListColumnOption } from "../interfaces";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface TaskListHeaderProps {}
 
 const TaskListHeader: React.FC<TaskListHeaderProps> = () => {
-  const { style, dispatch, taskList, allTasks, calendar, options } = useContext(
+  const { style, taskList, allTasks, calendar, options } = useContext(
     GanttElasticContext
   );
 
-  const [resizer] = useState({
-    moving: false,
+  const [resizer] = useState<{
+    moving?: TaskListColumnOption;
+    x: number;
+    initialWidth: number;
+  }>({
+    // moving: false,
     x: 0,
     initialWidth: 0
   });
@@ -49,8 +54,8 @@ const TaskListHeader: React.FC<TaskListHeaderProps> = () => {
       if (resizer.moving) {
         const lastWidth = resizer.moving.width;
         resizer.moving.width = resizer.initialWidth + event.clientX - resizer.x;
-        if (resizer.moving.width < taskList.minWidth) {
-          resizer.moving.width = taskList.minWidth;
+        if (resizer.moving.width < options.taskList.minWidth) {
+          resizer.moving.width = options.taskList.minWidth;
         }
         if (lastWidth !== resizer.moving.width) {
           // set({ ...resizer });
@@ -66,7 +71,7 @@ const TaskListHeader: React.FC<TaskListHeaderProps> = () => {
         }
       }
     },
-    [resizer.initialWidth, resizer.moving, resizer.x, taskList.minWidth]
+    [resizer.initialWidth, resizer.moving, resizer.x, options.taskList.minWidth]
   );
 
   /**
@@ -74,7 +79,7 @@ const TaskListHeader: React.FC<TaskListHeaderProps> = () => {
    */
   const resizerMouseUp = useCallback((): void => {
     if (resizer.moving) {
-      resizer.moving = false;
+      resizer.moving = undefined;
       emitEvent.emit("taskList-column-width-change-stop", resizer.moving);
     }
   }, [resizer]);
@@ -92,9 +97,16 @@ const TaskListHeader: React.FC<TaskListHeaderProps> = () => {
     };
   }, [resizerMouseMove, resizerMouseUp]);
 
-  const renderColumns = useMemo(() => {
-    return (
-      <React.Fragment>
+  return useMemo(
+    () => (
+      <div
+        className="gantt-elastic__task-list-header"
+        style={{
+          ...style["task-list-header"],
+          height: `${calendar.height}px`,
+          marginBottom: `${options.calendar.gap}px`
+        }}
+      >
         {_.map(taskList.columns, column => {
           return (
             <div
@@ -167,21 +179,18 @@ const TaskListHeader: React.FC<TaskListHeaderProps> = () => {
             </div>
           );
         })}
-      </React.Fragment>
-    );
-  }, [resizerMouseDown, resizerMouseUp, style, taskList.columns, allTasks]);
-
-  return (
-    <div
-      className="gantt-elastic__task-list-header"
-      style={{
-        ...style["task-list-header"],
-        height: `${calendar.height}px`,
-        marginBottom: `${options.calendar.gap}px`
-      }}
-    >
-      {renderColumns}
-    </div>
+      </div>
+    ),
+    [
+      allTasks,
+      calendar.height,
+      options.calendar.gap,
+      options.taskList.expander,
+      resizerMouseDown,
+      resizerMouseUp,
+      style,
+      taskList.columns
+    ]
   );
 };
 

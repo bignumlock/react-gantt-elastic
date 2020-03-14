@@ -1,36 +1,9 @@
-import {
-  GanttElasticOptions,
-  GanttElasticState,
-  TaskListColumnOption
-} from "@/types";
+import { GanttElasticOptions } from "@/types";
 import dayjs from "dayjs";
 import locale from "dayjs/locale/zh-cn";
+import { Options, State } from "../interfaces";
 
-const defaultColumns: TaskListColumnOption[] = [
-  //*
-  {
-    id: 0,
-    label: "ID",
-    value: "value",
-    width: 40,
-    thresholdPercent: 100,
-    widthFromPercentage: 0,
-    finalWidth: 0,
-    style: {}
-  },
-  {
-    id: 1,
-    label: "Task Name",
-    value: "value",
-    width: 200,
-    thresholdPercent: 100,
-    widthFromPercentage: 0,
-    finalWidth: 0,
-    style: {}
-  }
-];
-
-const defaultOptions: GanttElasticOptions = {
+const defaultOptions: Options = {
   // width: 0,
   // height: 0,
   // clientWidth: 0,
@@ -89,7 +62,22 @@ const defaultOptions: GanttElasticOptions = {
     display: true, //*
     resizeAfterThreshold: true, //*
     widthThreshold: 75, //*
-    columns: defaultColumns,
+    columns: [
+      {
+        id: 0,
+        label: "ID",
+        value: "value",
+        width: 40,
+        style: {}
+      },
+      {
+        id: 1,
+        label: "Task Name",
+        value: "value",
+        width: 200,
+        style: {}
+      }
+    ],
     percent: 100, //*
     minWidth: 18,
     expander: {
@@ -162,7 +150,7 @@ const defaultOptions: GanttElasticOptions = {
  * @param {object} userOptions - initial user options that will merge with those below
  * @returns {object} merged options
  */
-const getOptions = (userOptions?: GanttElasticOptions): GanttElasticOptions => {
+const getOptions = (userOptions?: Partial<GanttElasticOptions>): Options => {
   let localeName = "en";
   if (
     userOptions &&
@@ -176,7 +164,7 @@ const getOptions = (userOptions?: GanttElasticOptions): GanttElasticOptions => {
   };
 };
 
-const defaultState: GanttElasticState = {
+const defaultState: State = {
   width: 0,
   // height: 0,
   // clientWidth: 0,
@@ -245,4 +233,4 @@ const defaultState: GanttElasticState = {
   }
 };
 
-export { getOptions, defaultState };
+export { getOptions, defaultState, defaultOptions };

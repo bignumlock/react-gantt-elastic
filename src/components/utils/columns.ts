@@ -1,9 +1,6 @@
-import {
-  GanttElasticTaskListColumn,
-  Task,
-  TaskListColumnOption
-} from "@/types";
+import { GanttElasticTaskListColumn } from "@/types";
 import _ from "lodash";
+import { Task, TaskListColumnOption } from "../interfaces";
 import { getMaximalExpanderWidth, getTaskHeight } from "./tasks";
 
 /**

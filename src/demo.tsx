@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-target-blank */
 import dayjs from "dayjs";
 import React from "react";
 import ReactDOM from "react-dom";
@@ -17,7 +18,7 @@ function getDate(hours: number) {
   return new Date(timeStamp + hours * 60 * 60 * 1000).getTime();
 }
 
-let tasks = [
+const tasks = [
   {
     id: 1,
     label: "Make some noise",
@@ -171,8 +172,8 @@ let tasks = [
   }
 ];
 
-// let types = ["project", "milestone", "task"];
-// const rows = 12;
+// const types = ["project", "milestone", "task"];
+// const rows = 200;
 // for (let i = -rows; i < rows; i++) {
 //   tasks.push({
 //     id: i + rows + 100,
@@ -190,11 +191,17 @@ const options = {
     label: "Your project title as html (link or whatever...)",
     html: false
   },
-  scope: {
-    //*
-    before: 21,
-    after: 13
+  // scope: {
+  //   //*
+  //   before: 10,
+  //   after: 20
+  // },
+  times: {
+    timeZoom: 5,
+    firstTime: dayjs("2020/03/10").valueOf()
+    // lastTime: dayjs("2020/03/14").valueOf()
   },
+  row: { height: 16 },
   taskList: {
     // display: false,
     columns: [
@@ -302,7 +309,6 @@ ReactDOM.render(
       // lastTime={dayjs("2020/03/09")
       //   .endOf("day")
       //   .valueOf()}
-      columns={options.taskList.columns}
     ></GanttElastic>
     {/* <GanttElasticContext.Provider
       value={{
