@@ -15,7 +15,7 @@ const Grid: React.FC<ChartProps> = () => {
     allTasks,
     times,
     scroll,
-    width,
+    width: fullWidth,
     allVisibleTasksHeight
   } = useContext(GanttElasticContext);
   const allTaskCount = allTasks.length;
@@ -25,10 +25,11 @@ const Grid: React.FC<ChartProps> = () => {
     refs.svgChart = svgChart;
   }, [refs]);
 
+  const strokeWidth = parseInt(`${style["grid-line-vertical"]["strokeWidth"]}`);
+
   /**
    * Generate vertical lines of the grid
    */
-
   const renderVerticalLines = useMemo(() => {
     const lines: JSX.Element[] = [];
     _.forEach(times.steps, step => {
@@ -51,7 +52,7 @@ const Grid: React.FC<ChartProps> = () => {
             y2={
               allTaskCount *
                 (options.row.height + options.chart.grid.horizontal.gap * 2) +
-              style["grid-line-vertical"]["strokeWidth"]
+              strokeWidth
             }
           ></line>
         );
@@ -64,6 +65,7 @@ const Grid: React.FC<ChartProps> = () => {
     options.row.height,
     scroll.chart.left,
     scroll.chart.right,
+    strokeWidth,
     style,
     times.steps
   ]);
@@ -78,7 +80,7 @@ const Grid: React.FC<ChartProps> = () => {
           const y =
             index *
               (options.row.height + options.chart.grid.horizontal.gap * 2) +
-            style["grid-line-vertical"]["strokeWidth"] / 2;
+            strokeWidth / 2;
 
           return (
             <line
@@ -97,6 +99,7 @@ const Grid: React.FC<ChartProps> = () => {
   }, [
     options.chart.grid.horizontal.gap,
     options.row.height,
+    strokeWidth,
     style,
     visibleTasks
   ]);
@@ -126,33 +129,45 @@ const Grid: React.FC<ChartProps> = () => {
     return timeLine;
   }, [options.times.timePerPixel, times.firstTime]);
 
-  return (
-    <svg
-      className="gantt-elastic__grid-lines-wrapper"
-      style={{ ...style["grid-lines-wrapper"] }}
-      ref={svgChart}
-      x="0"
-      y="0"
-      width={width}
-      height={allVisibleTasksHeight}
-      xmlns="http//www.w3.org/2000/svg"
-    >
-      <g
-        className="gantt-elastic__grid-lines"
-        style={{ ...style["grid-lines"] }}
+  return useMemo(
+    () => (
+      <svg
+        className="gantt-elastic__grid-lines-wrapper"
+        style={{ ...style["grid-lines-wrapper"] }}
+        ref={svgChart}
+        x="0"
+        y="0"
+        width={fullWidth}
+        height={allVisibleTasksHeight}
+        xmlns="http//www.w3.org/2000/svg"
       >
-        {renderHorizontalLines}
-        {renderVerticalLines}
-        <line
-          className="gantt-elastic__grid-line-time"
-          style={{ ...style["grid-line-time"] }}
-          x1={timeLinePosition.x}
-          y1={timeLinePosition.y1}
-          x2={timeLinePosition.x}
-          y2={timeLinePosition.y2}
-        ></line>
-      </g>
-    </svg>
+        <g
+          className="gantt-elastic__grid-lines"
+          style={{ ...style["grid-lines"] }}
+        >
+          {renderHorizontalLines}
+          {renderVerticalLines}
+          <line
+            className="gantt-elastic__grid-line-time"
+            style={{ ...style["grid-line-time"] }}
+            x1={timeLinePosition.x}
+            y1={timeLinePosition.y1}
+            x2={timeLinePosition.x}
+            y2={timeLinePosition.y2}
+          ></line>
+        </g>
+      </svg>
+    ),
+    [
+      allVisibleTasksHeight,
+      renderHorizontalLines,
+      renderVerticalLines,
+      style,
+      timeLinePosition.x,
+      timeLinePosition.y1,
+      timeLinePosition.y2,
+      fullWidth
+    ]
   );
 };
 

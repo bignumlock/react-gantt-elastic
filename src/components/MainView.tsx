@@ -33,18 +33,18 @@ const MainView: React.FC<MainViewProps> = () => {
     style,
     refs,
     options,
-    width,
+    width: fullWidth,
     height,
     clientWidth,
     rowsHeight,
     scrollBarHeight,
     allVisibleTasksHeight,
     taskList,
-    calendar,
-    scroll
+    calendar
+    // scroll
   } = useContext(GanttElasticContext);
 
-  // const [state] = useState({ scrolling: false });
+  const [scroll] = useState({ scrolling: false });
 
   // Chart拖动事件数据，不需要重新渲染页面
   const [mousePos] = useState({
@@ -242,99 +242,124 @@ const MainView: React.FC<MainViewProps> = () => {
     ]
   );
 
-  return (
-    <div className="gantt-elastic__main-view" style={style["main-view"]}>
-      <div
-        className="gantt-elastic__main-container-wrapper"
-        style={{
-          ...style["main-container-wrapper"],
-          height: height + "px"
-        }}
-      >
+  return useMemo(
+    () => (
+      <div className="gantt-elastic__main-view" style={style["main-view"]}>
         <div
-          className="gantt-elastic__main-container"
+          className="gantt-elastic__main-container-wrapper"
           style={{
-            ...style["main-container"],
-            width: clientWidth + "px",
+            ...style["main-container-wrapper"],
             height: height + "px"
           }}
-          ref={mainViewRef}
         >
           <div
-            className="gantt-elastic__container"
-            style={style["container"]}
-            onMouseMove={mouseMove}
-            onMouseUp={mouseUp}
+            className="gantt-elastic__main-container"
+            style={{
+              ...style["main-container"],
+              width: clientWidth + "px",
+              height: height + "px"
+            }}
+            ref={mainViewRef}
           >
             <div
-              ref={taskListRef}
-              className="gantt-elastic__task-list-container"
-              style={{
-                ...style["task-list-container"],
-                width: taskList.finalWidth + "px",
-                height: height + "px"
-              }}
+              className="gantt-elastic__container"
+              style={style["container"]}
+              onMouseMove={mouseMove}
+              onMouseUp={mouseUp}
             >
-              <TaskList></TaskList>
+              {options.taskList.display && (
+                <div
+                  ref={taskListRef}
+                  className="gantt-elastic__task-list-container"
+                  style={{
+                    ...style["task-list-container"],
+                    width: taskList.finalWidth + "px",
+                    height: height + "px"
+                  }}
+                >
+                  <TaskList></TaskList>
+                </div>
+              )}
+              <div
+                className="gantt-elastic__main-view-container"
+                ref={chartContainerRef}
+                style={style["main-view-container"]}
+                onMouseDown={chartMouseDown}
+                onTouchStart={chartMouseDown}
+                onMouseUp={chartMouseUp}
+                onTouchEnd={chartMouseUp}
+                onMouseMoveCapture={chartMouseMove}
+                onTouchMoveCapture={chartMouseMove}
+                onWheelCapture={chartWheel}
+              >
+                <Chart></Chart>
+              </div>
             </div>
+          </div>
+          <div
+            className="gantt-elastic__chart-scroll-container gantt-elastic__chart-scroll-container--vertical"
+            ref={chartScrollContainerVerticalRef}
+            style={{
+              ...style["chart-scroll-container"],
+              ...style["chart-scroll-container--vertical"],
+              width: scrollBarHeight + "px",
+              height: rowsHeight + "px",
+              marginTop: calendar.height + options.calendar.gap + "px"
+            }}
+            onScroll={onVerticalScroll}
+          >
             <div
-              className="gantt-elastic__main-view-container"
-              ref={chartContainerRef}
-              style={style["main-view-container"]}
-              onMouseDown={chartMouseDown}
-              onTouchStart={chartMouseDown}
-              onMouseUp={chartMouseUp}
-              onTouchEnd={chartMouseUp}
-              onMouseMoveCapture={chartMouseMove}
-              onTouchMoveCapture={chartMouseMove}
-              onWheelCapture={chartWheel}
-            >
-              <Chart></Chart>
-            </div>
+              className="gantt-elastic__chart-scroll--vertical"
+              style={{
+                width: "1px",
+                height: allVisibleTasksHeight + "px"
+              }}
+            ></div>
           </div>
         </div>
         <div
-          className="gantt-elastic__chart-scroll-container gantt-elastic__chart-scroll-container--vertical"
-          ref={chartScrollContainerVerticalRef}
+          className="gantt-elastic__chart-scroll-container gantt-elastic__chart-scroll-container--horizontal"
+          ref={chartScrollContainerHorizontalRef}
           style={{
             ...style["chart-scroll-container"],
-            ...style["chart-scroll-container--vertical"],
-            width: scrollBarHeight + "px",
-            height: rowsHeight + "px",
-            marginTop: calendar.height + options.calendar.gap + "px"
+            ...style["chart-scroll-container--horizontal"],
+            marginLeft: !options.taskList.display
+              ? "0px"
+              : taskList.finalWidth + "px"
           }}
-          onScroll={onVerticalScroll}
+          onScroll={onHorizontalScroll}
         >
           <div
-            className="gantt-elastic__chart-scroll--vertical"
+            className="gantt-elastic__chart-scroll--horizontal"
             style={{
-              width: "1px",
-              height: allVisibleTasksHeight + "px"
+              height: "1px",
+              width: fullWidth + "px"
             }}
           ></div>
         </div>
       </div>
-      <div
-        className="gantt-elastic__chart-scroll-container gantt-elastic__chart-scroll-container--horizontal"
-        ref={chartScrollContainerHorizontalRef}
-        style={{
-          ...style["chart-scroll-container"],
-          ...style["chart-scroll-container--horizontal"],
-          marginLeft: !options.taskList.display
-            ? "0px"
-            : taskList.finalWidth + "px"
-        }}
-        onScroll={onHorizontalScroll}
-      >
-        <div
-          className="gantt-elastic__chart-scroll--horizontal"
-          style={{
-            height: "1px",
-            width: width + "px"
-          }}
-        ></div>
-      </div>
-    </div>
+    ),
+    [
+      allVisibleTasksHeight,
+      calendar.height,
+      chartMouseDown,
+      chartMouseMove,
+      chartMouseUp,
+      chartWheel,
+      clientWidth,
+      height,
+      mouseMove,
+      mouseUp,
+      onHorizontalScroll,
+      onVerticalScroll,
+      options.calendar.gap,
+      options.taskList.display,
+      rowsHeight,
+      scrollBarHeight,
+      style,
+      taskList.finalWidth,
+      fullWidth
+    ]
   );
 };
 

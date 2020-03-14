@@ -17,7 +17,7 @@ const Chart: React.FC<ChartProps> = () => {
     refs,
     calendar,
     height,
-    width,
+    width: fullWidth,
     rowsHeight,
     allVisibleTasksHeight,
     options
@@ -39,7 +39,21 @@ const Chart: React.FC<ChartProps> = () => {
 
   const renderTasks = useMemo(() => {
     return (
-      <>
+      <svg
+        className="gantt-elastic__chart-graph-svg"
+        style={{
+          ...style["chart-graph-svg"]
+        }}
+        ref={chartGraphSvg}
+        x="0"
+        y="0"
+        width={fullWidth + "px"}
+        height={allVisibleTasksHeight + "px"}
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <DaysHighlight></DaysHighlight>
+        <Grid></Grid>
+        <DependencyLines></DependencyLines>
         {_.map(visibleTasks, task => {
           return (
             <g
@@ -53,71 +67,66 @@ const Chart: React.FC<ChartProps> = () => {
             </g>
           );
         })}
-      </>
+      </svg>
     );
-  }, [visibleTasks, style]);
+  }, [style, fullWidth, allVisibleTasksHeight, visibleTasks]);
 
-  return (
-    <div
-      className="gantt-elastic__chart"
-      style={{ ...style["chart"] }}
-      ref={divChart}
-    >
+  return useMemo(
+    () => (
       <div
-        className="gantt-elastic__chart-calendar-container"
-        ref={chartCalendarContainer}
-        style={{
-          ...style["chart-calendar-container"],
-          height: calendar.height + "px",
-          marginBottom: options.calendar.gap + "px"
-        }}
-      >
-        <Calendar></Calendar>
-      </div>
-      <div
-        className="gantt-elastic__chart-graph-container"
-        ref={chartGraphContainer}
-        style={{
-          ...style["chart-graph-container"],
-          height: height - calendar.height + "px"
-        }}
+        className="gantt-elastic__chart"
+        style={{ ...style["chart"] }}
+        ref={divChart}
       >
         <div
+          className="gantt-elastic__chart-calendar-container"
+          ref={chartCalendarContainer}
           style={{
-            ...style["chart-area"],
-            width: width + "px",
-            height: rowsHeight + "px"
+            ...style["chart-calendar-container"],
+            height: calendar.height + "px",
+            marginBottom: options.calendar.gap + "px"
+          }}
+        >
+          <Calendar></Calendar>
+        </div>
+        <div
+          className="gantt-elastic__chart-graph-container"
+          ref={chartGraphContainer}
+          style={{
+            ...style["chart-graph-container"],
+            height: height - calendar.height + "px"
           }}
         >
           <div
-            className="gantt-elastic__chart-graph"
-            ref={chartGraph}
             style={{
-              ...style["chart-graph"],
-              height: "100%"
+              ...style["chart-area"],
+              width: fullWidth + "px",
+              height: rowsHeight + "px"
             }}
           >
-            <svg
-              className="gantt-elastic__chart-graph-svg"
+            <div
+              className="gantt-elastic__chart-graph"
+              ref={chartGraph}
               style={{
-                ...style["chart-graph-svg"]
+                ...style["chart-graph"],
+                height: "100%"
               }}
-              ref={chartGraphSvg}
-              x="0"
-              y="0"
-              width={width + "px"}
-              height={allVisibleTasksHeight + "px"}
-              xmlns="http://www.w3.org/2000/svg"
             >
-              <DaysHighlight></DaysHighlight>
-              <Grid></Grid>
-              <DependencyLines></DependencyLines>
               {renderTasks}
-            </svg>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    ),
+    [
+      calendar.height,
+      height,
+      options.calendar.gap,
+      renderTasks,
+      rowsHeight,
+      style,
+      fullWidth
+    ]
   );
 };
 

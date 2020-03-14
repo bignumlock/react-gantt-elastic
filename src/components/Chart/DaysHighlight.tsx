@@ -39,7 +39,7 @@ const DaysHighlight: React.FC<DaysHighlightProps> = () => {
 
   const { workingDays } = options.calendar;
 
-  const renderWorkingDays = useMemo(() => {
+  return useMemo(() => {
     /**
      * Get working days
      */
@@ -48,32 +48,27 @@ const DaysHighlight: React.FC<DaysHighlightProps> = () => {
     });
 
     return (
-      <React.Fragment>
-        {_.map(workingSteps, day => (
-          <rect
-            className="gantt-elastic__chart-days-highlight-rect"
-            key={getKey(day.time)}
-            x={day.offset.px}
-            y="0"
-            width={day.width.px}
-            height="100%"
-            style={{
-              ...style["chart-days-highlight-rect"]
-            }}
-          ></rect>
-        ))}
-      </React.Fragment>
+      <g
+        className="gantt-elastic__chart-days-highlight-container"
+        style={{ ...style["chart-days-highlight-container"] }}
+      >
+        {showWorkingDays(workingDays.asMutable()) &&
+          _.map(workingSteps, day => (
+            <rect
+              className="gantt-elastic__chart-days-highlight-rect"
+              key={getKey(day.time)}
+              x={day.offset.px}
+              y="0"
+              width={day.width.px}
+              height="100%"
+              style={{
+                ...style["chart-days-highlight-rect"]
+              }}
+            ></rect>
+          ))}
+      </g>
     );
   }, [style, times.steps, workingDays]);
-
-  return (
-    <g
-      className="gantt-elastic__chart-days-highlight-container"
-      style={{ ...style["chart-days-highlight-container"] }}
-    >
-      {showWorkingDays(workingDays) && renderWorkingDays}
-    </g>
-  );
 };
 
 export default DaysHighlight;

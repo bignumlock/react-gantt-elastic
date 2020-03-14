@@ -1,7 +1,7 @@
 import Expander from "@/components/Expander";
+import { Task } from "@/components/interfaces";
 import GanttElasticContext from "@/GanttElasticContext";
 import { emitEvent } from "@/GanttElasticEvents";
-import { Task } from "@/types";
 import React, { useCallback, useContext, useMemo } from "react";
 import invariant from "ts-invariant";
 import ProgressBar from "./ProgressBar";
@@ -33,7 +33,7 @@ const ChartTask: React.FC<TaskProps> = ({ task }) => {
           task.events[event.type](event, task);
       }
     },
-    [scroll, task]
+    [scroll.scrolling, task]
   );
 
   /**
@@ -66,7 +66,16 @@ const ChartTask: React.FC<TaskProps> = ({ task }) => {
             width={options.chart.expander.size}
             height={options.chart.expander.size}
           >
-            <Expander tasks={[task]} type="chart"></Expander>
+            <Expander
+              tasks={[task]}
+              type="chart"
+              options={{
+                type: options.chart.expander.type,
+                size: options.chart.expander.size,
+                padding: 0,
+                margin: 0
+              }}
+            ></Expander>
           </foreignObject>
         )}
       </>

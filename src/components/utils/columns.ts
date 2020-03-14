@@ -1,8 +1,6 @@
-import {
-  GanttElasticTaskListColumn,
-  Task,
-  TaskListColumnOption
-} from "@/types";
+import { GanttElasticTaskListColumn } from "@/types";
+import _ from "lodash";
+import { Task, TaskListColumnOption } from "../interfaces";
 import { getMaximalExpanderWidth, getTaskHeight } from "./tasks";
 
 /**
@@ -12,10 +10,8 @@ import { getMaximalExpanderWidth, getTaskHeight } from "./tasks";
 const initialzeColumns = (
   columns: GanttElasticTaskListColumn[]
 ): TaskListColumnOption[] => {
-  const cols = [];
-  for (let index = 0; index < columns.length; index++) {
-    const column = columns[index];
-    cols.push({
+  return _.map(columns, (column, index) => {
+    return {
       ...column,
       height: 0,
       finalWidth: 0,
@@ -24,21 +20,8 @@ const initialzeColumns = (
       expander: !!column.expander,
       style: column.style ?? {},
       _key: `${index}-${column.label}`
-    });
-  }
-  return cols;
-  // return columns.map((column, index) => {
-  //   return {
-  //     ...column,
-  //     height: 0,
-  //     finalWidth: 0,
-  //     thresholdPercent: 100,
-  //     widthFromPercentage: 0,
-  //     expander: !!column.expander,
-  //     style: column.style ?? {},
-  //     _key: `${index}-${column.label}`
-  //   };
-  // });
+    };
+  });
 };
 
 /**

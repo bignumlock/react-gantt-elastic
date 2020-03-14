@@ -1,6 +1,6 @@
-import { StepOption } from "@/types";
 import dayjs from "dayjs";
 import _ from "lodash";
+import { StepOption } from "../interfaces";
 
 /**
  * Determine if element is inside current view port

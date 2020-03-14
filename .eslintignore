@@ -1,0 +1,7 @@
+/scripts
+/config
+/tests
+/src/serviceWorker.ts
+/webpack.config.js
+/webpack.dev.js
+/jest.config.js

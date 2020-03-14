@@ -1,0 +1,53 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaVersion": 2018,
+    "allowImportExportEverywhere": true,
+    "project": "./tsconfig.json"
+  },
+  "env": {
+    "browser": true,
+    "commonjs": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking",
+    "plugin:react/recommended"
+  ],
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
+  "plugins": ["react-hooks", "@typescript-eslint", "react"],
+  "globals": {
+    "__static": true
+  },
+  "rules": {
+    "indent": 0,
+    "linebreak-style": ["error", "unix"],
+    "quotes": 0,
+    // "quotes": ["error", "double"],
+    "semi": ["error", "always"],
+    "no-console": 0,
+    "no-debugger": 0,
+    "no-process-env": "error",
+    "no-alert": "error",
+    "react/prop-types": 0, //防止在React组件定义中丢失props验证
+    // "react/no-unescaped-entities": 0,
+    "react-hooks/rules-of-hooks": "error", // 检查 Hook 的规则
+    "react-hooks/exhaustive-deps": "warn" // 检查 effect 的依赖
+    // "@typescript-eslint/explicit-function-return-type": [
+    //   "warn",
+    //   {
+    //     "allowExpressions": true,
+    //     "allowTypedFunctionExpresxsions": true
+    //   }
+    // ],
+    // "@typescript-eslint/no-empty-function": 0,
+    // "@typescript-eslint/unbound-method": 0
+  }
+}

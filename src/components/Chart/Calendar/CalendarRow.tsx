@@ -12,19 +12,24 @@ interface CalendarRowProps {
 const CalendarRow: React.FC<CalendarRowProps> = ({ items, which }) => {
   const { style } = useContext(GanttElasticContext);
 
-  const rowStyle = useMemo(
-    () => ({ ...style["calendar-row"], ...style["calendar-row--" + which] }),
-    [style, which]
-  );
+  return useMemo(() => {
+    const rowStyle = {
+      ...style["calendar-row"],
+      ...style["calendar-row--" + which]
+    };
 
-  const renderRows = useMemo(() => {
     const rectStyle = {
       ...style["calendar-row-rect"],
       ...style["calendar-row-rect--" + which]
     };
 
     return (
-      <React.Fragment>
+      <div
+        className={
+          "gantt-elastic__calendar-row gantt-elastic__calendar-row--" + which
+        }
+        style={rowStyle}
+      >
         {_.map(items, item => (
           <div
             key={item.key}
@@ -39,20 +44,9 @@ const CalendarRow: React.FC<CalendarRowProps> = ({ items, which }) => {
             ))}
           </div>
         ))}
-      </React.Fragment>
+      </div>
     );
   }, [items, style, which]);
-
-  return (
-    <div
-      className={
-        "gantt-elastic__calendar-row gantt-elastic__calendar-row--" + which
-      }
-      style={rowStyle}
-    >
-      {renderRows}
-    </div>
-  );
 };
 
 export default CalendarRow;
