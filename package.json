@@ -1,8 +1,8 @@
 {
-  "name": "gantt-elastic",
+  "name": "react-gantt-elastic",
   "version": "1.0.1",
-  "description": "Gantt chart. Elastic javascript gantt chart. Vue gantt. Project manager responsive gantt. jquery gantt.",
-  "main": "src/index.tsx",
+  "description": "Gantt chart. Elastic javascript gantt chart. React gantt. Project manager responsive gantt. jquery gantt.",
+  "main": "src/GanttElastic.tsx",
   "dependencies": {
     "dayjs": "^1.8.20",
     "events": "^3.1.0",
@@ -56,7 +56,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/neuronetio/gantt-elastic.git"
+    "url": "git+https://github.com/bignumlock/react-gantt-elastic.git"
   },
   "keywords": [
     "gantt",
@@ -66,12 +66,12 @@
     "javascript gantt",
     "javascript gantt chart",
     "jQuery gantt",
-    "vue gantt",
+    "react gantt",
     "js gantt",
     "gantt-chart",
     "responsive",
-    "vue",
-    "vue-gantt",
+    "react",
+    "react-gantt",
     "javascript gantt",
     "project gantt",
     "project manger",
@@ -81,12 +81,12 @@
     "project",
     "task"
   ],
-  "author": "Rafal Pospiech <neuronet.io@gmail.com> (https://neuronet.io)",
+  "author": "ich <bignumlock@gmail.com> ",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/neuronetio/gantt-elastic/issues"
+    "url": "https://github.com/bignumlock/react-gantt-elastic/issues"
   },
-  "homepage": "https://neuronetio.github.io/gantt-elastic/",
+  "homepage": "https://github.com/bignumlock/react-gantt-elastic",
   "postcss": {
     "plugins": {
       "autoprefixer": {}
