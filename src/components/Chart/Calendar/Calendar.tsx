@@ -9,7 +9,13 @@ import {
 import GanttElasticContext from "@/GanttElasticContext";
 import dayjs from "dayjs";
 import _ from "lodash";
-import React, { useContext, useEffect, useMemo, useRef } from "react";
+import React, {
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef
+} from "react";
 import invariant from "ts-invariant";
 import CalendarRow from "./CalendarRow";
 
@@ -28,16 +34,16 @@ const Calendar: React.FC<CalendarProps> = () => {
     style,
     dispatch,
     options,
-    width: fullWidth,
+    chartWidth,
     times,
     calendar
   } = useContext(GanttElasticContext);
 
   // refs
-  const chartCalendarContainer = useRef(null);
+  const chartCalendarContainerRef = useRef(null);
 
   useEffect(() => {
-    refs.chartCalendarContainer = chartCalendarContainer;
+    refs.chartCalendarContainer = chartCalendarContainerRef;
   }, [refs]);
 
   /**
@@ -131,7 +137,7 @@ const Calendar: React.FC<CalendarProps> = () => {
       const days: CalendarRowText[] = [];
       const daysCount = howManyDaysFit(
         format,
-        fullWidth,
+        chartWidth,
         maxWidths,
         steps.length
       );
@@ -177,7 +183,7 @@ const Calendar: React.FC<CalendarProps> = () => {
     return allDays;
   }, [
     calendar.day,
-    fullWidth,
+    chartWidth,
     options.calendar.day.display,
     options.calendar.day.format,
     options.calendar.day.height,
@@ -205,7 +211,12 @@ const Calendar: React.FC<CalendarProps> = () => {
       const months: CalendarRowText[] = [];
 
       const count = getMonthsCount(firstTime, lastTime);
-      const monthsCount = howManyMonthsFit(format, fullWidth, maxWidths, count);
+      const monthsCount = howManyMonthsFit(
+        format,
+        chartWidth,
+        maxWidths,
+        count
+      );
       if (monthsCount.count === 0) {
         return allMonths;
       }
@@ -270,7 +281,7 @@ const Calendar: React.FC<CalendarProps> = () => {
     return allMonths;
   }, [
     calendar.month,
-    fullWidth,
+    chartWidth,
     options.calendar.month.display,
     options.calendar.month.format,
     options.calendar.month.height,
@@ -280,7 +291,7 @@ const Calendar: React.FC<CalendarProps> = () => {
     times.steps
   ]);
 
-  useMemo(() => {
+  useLayoutEffect(() => {
     const height = calculateCalendarDimensions(
       hours,
       days,
@@ -303,14 +314,14 @@ const Calendar: React.FC<CalendarProps> = () => {
         className="gantt-elastic__calendar-wrapper"
         style={{
           ...style["calendar-wrapper"],
-          width: fullWidth + "px"
+          width: chartWidth + "px"
         }}
       >
         <div
           className="gantt-elastic__calendar"
           style={{
             ...style["calendar"],
-            width: fullWidth + "px"
+            width: chartWidth + "px"
           }}
         >
           {options.calendar.month.display && (
@@ -329,7 +340,7 @@ const Calendar: React.FC<CalendarProps> = () => {
       days,
       hours,
       months,
-      fullWidth,
+      chartWidth,
       options.calendar.day.display,
       options.calendar.hour.display,
       options.calendar.month.display,

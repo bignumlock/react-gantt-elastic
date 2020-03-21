@@ -7,11 +7,11 @@ import { invariant } from "ts-invariant";
 import ProgressBar from "../ProgressBar";
 import ChartText from "../Text";
 
-export interface ProjectProps {
+export interface MilestoneProps {
   task: Task;
 }
 
-const ChartProject: React.FC<ProjectProps> = ({ task }) => {
+const ChartMilestone: React.FC<MilestoneProps> = ({ task }) => {
   const { style, options } = useContext(GanttElasticContext);
 
   /**
@@ -38,25 +38,21 @@ const ChartProject: React.FC<ProjectProps> = ({ task }) => {
    * Get points
    */
   const points = useMemo(() => {
-    const bottom = task.height - task.height / 4;
-    const corner = task.height / 6;
-    const smallCorner = task.height / 8;
-    return `M ${smallCorner},0
-                L ${task.width - smallCorner} 0
-                L ${task.width} ${smallCorner}
-                L ${task.width} ${bottom}
-                L ${task.width - corner} ${task.height}
-                L ${task.width - corner * 2} ${bottom}
-                L ${corner * 2} ${bottom}
-                L ${corner} ${task.height}
-                L 0 ${bottom}
-                L 0 ${smallCorner}
-                Z
-        `;
+    const fifty = task.height / 2;
+    let offset = fifty;
+    if (task.width / 2 - offset < 0) {
+      offset = task.width / 2;
+    }
+    return `0,${fifty}
+        ${offset},0
+        ${task.width - offset},0
+        ${task.width},${fifty}
+        ${task.width - offset},${task.height}
+        ${offset},${task.height}`;
   }, [task.height, task.width]);
 
   return useMemo(() => {
-    const clipPathId = `gantt-elastic__project-clip-path-${task.id}`;
+    const clipPathId = `gantt-elastic__milestone-clip-path-${task.id}`;
 
     const displayExpander =
       options.chart.expander.display ||
@@ -65,19 +61,19 @@ const ChartProject: React.FC<ProjectProps> = ({ task }) => {
 
     return (
       <g
-        className="gantt-elastic__chart-row-bar-wrapper gantt-elastic__chart-row-project-wrapper"
+        className="gantt-elastic__chart-row-bar-wrapper gantt-elastic__chart-row-milestone-wrapper"
         style={{
           ...style["chart-row-bar-wrapper"],
-          ...style["chart-row-project-wrapper"],
+          ...style["chart-row-milestone-wrapper"],
           ...task.style["chart-row-bar-wrapper"]
         }}
       >
         {displayExpander && (
           <foreignObject
-            className="gantt-elastic__chart-expander gantt-elastic__chart-expander--project"
+            className="gantt-elastic__chart-expander gantt-elastic__chart-expander--milestone"
             style={{
               ...style["chart-expander"],
-              ...style["chart-expander--project"],
+              ...style["chart-expander--milestone"],
               ...task.style["chart-expander"]
             }}
             x={
@@ -102,10 +98,10 @@ const ChartProject: React.FC<ProjectProps> = ({ task }) => {
         )}
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="gantt-elastic__chart-row-bar gantt-elastic__chart-row-project"
+          className="gantt-elastic__chart-row-bar gantt-elastic__chart-row-milestone"
           style={{
             ...style["chart-row-bar"],
-            ...style["chart-row-project"],
+            ...style["chart-row-milestone"],
             ...task.style["chart-row-bar"]
           }}
           x={task.x}
@@ -127,24 +123,25 @@ const ChartProject: React.FC<ProjectProps> = ({ task }) => {
         >
           <defs>
             <clipPath id={clipPathId}>
-              <path d={points}></path>
+              <polygon points={points}></polygon>
             </clipPath>
           </defs>
-          <path
-            className="gantt-elastic__chart-row-bar-polygon gantt-elastic__chart-row-project-polygon"
+          <polygon
+            className="gantt-elastic__chart-row-bar-polygon gantt-elastic__chart-row-milestone-polygon"
             style={{
               ...style["chart-row-bar-polygon"],
-              ...style["chart-row-project-polygon"],
+              ...style["chart-row-milestone-polygon"],
               ...task.style["base"],
               ...task.style["chart-row-bar-polygon"]
             }}
-            d={points}
-          ></path>
+            points={points}
+          ></polygon>
           <ProgressBar
             task={task}
             clipPath={"url(#" + clipPathId + ")"}
           ></ProgressBar>
         </svg>
+
         {options.chart.text.display && <ChartText task={task}></ChartText>}
       </g>
     );
@@ -164,4 +161,4 @@ const ChartProject: React.FC<ProjectProps> = ({ task }) => {
   ]);
 };
 
-export default ChartProject;
+export default ChartMilestone;

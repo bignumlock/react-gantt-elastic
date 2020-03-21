@@ -1,17 +1,49 @@
 import dayjs from "dayjs";
 import _ from "lodash";
-import React, { CSSProperties, Reducer, useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
+import React, {
+  CSSProperties,
+  Reducer,
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+  useState
+} from "react";
 import ResizeObserver from "resize-observer-polyfill";
 import Immutable, { ImmutableObject } from "seamless-immutable";
 import invariant from "ts-invariant";
-import { GanttElasticRefs, State, Task, TaskMap } from "./components/interfaces";
+import {
+  GanttElasticRefs,
+  State,
+  Task,
+  TaskMap
+} from "./components/interfaces";
 import MainView from "./components/MainView";
 import { timeToPixelOffsetX } from "./components/utils/charts";
-import { calculateTaskListColumnsDimensions, initialzeColumns } from "./components/utils/columns";
+import {
+  calculateTaskListColumnsDimensions,
+  initialzeColumns
+} from "./components/utils/columns";
 import { defaultState, getOptions } from "./components/utils/options";
 import { prepareStyle } from "./components/utils/style";
-import { fillTasks, getHeight, getTasksHeight, makeTaskTree, recalculateTasks } from "./components/utils/tasks";
-import { calculateSteps, calculateTimePerPixel, calculateTotalViewDurationMs, calculateTotalViewDurationPx, calculateWidth, computeDayWidths, computeHourWidths, computeMonthWidths } from "./components/utils/times";
+import {
+  fillTasks,
+  getHeight,
+  getTasksHeight,
+  makeTaskTree,
+  recalculateTasks
+} from "./components/utils/tasks";
+import {
+  calculateSteps,
+  calculateTimePerPixel,
+  calculateTotalViewDurationMs,
+  calculateTotalViewDurationPx,
+  calculateWidth,
+  computeDayWidths,
+  computeHourWidths,
+  computeMonthWidths
+} from "./components/utils/times";
 import GanttElasticContext from "./GanttElasticContext";
 import { emitEvent } from "./GanttElasticEvents";
 import { DynamicStyle, GanttElasticOptions, GanttElasticTask } from "./types";
@@ -37,11 +69,12 @@ export interface GanttElasticProps extends ComponentProps {
 type GanttElasticState = {
   resizeObserver?: ResizeObserver;
   chartWidth: number;
+  // clientWidth: number;
 } & State;
 
 const reducer: Reducer<
   ImmutableObject<GanttElasticState>,
-  { type: string; payload: object }
+  { type: string; payload: any }
 > = (state, action) => {
   const immutableState = Immutable.isImmutable(state)
     ? state
@@ -51,6 +84,8 @@ const reducer: Reducer<
     // return Immutable.merge(state, { ...action.payload });
   } else if (action.type === "update-calendar-height") {
     return immutableState.setIn(["calendar", "height"], action.payload);
+  } else if (action.type === "resize") {
+    return immutableState.setIn(["clientWidth"], action.payload);
   }
   return immutableState.merge(action.payload, { deep: true });
 };
@@ -273,20 +308,17 @@ const GanttElastic: React.FC<GanttElasticProps> = ({
       ctx
     );
 
-    const times = {
-      firstTime,
-      lastTime,
-      totalViewDurationMs,
-      totalViewDurationPx,
-      steps
-    };
-
     dispatch({
       type: "initialize",
       payload: {
-        times,
+        times: {
+          firstTime,
+          lastTime,
+          totalViewDurationMs,
+          totalViewDurationPx,
+          steps
+        },
         chartWidth,
-        width: chartWidth,
         calendar: {
           hour: hourVariables,
           day: dayVariables,
@@ -377,6 +409,7 @@ const GanttElastic: React.FC<GanttElasticProps> = ({
     },
     [tasksById]
   );
+
   /**
    * Is task visible
    *
@@ -400,7 +433,7 @@ const GanttElastic: React.FC<GanttElasticProps> = ({
   // 根据visibleTasks计算高度，总是会变化的
   const {
     visibleTasks,
-    height,
+    clientHeight,
     scrollBarHeight,
     allVisibleTasksHeight,
     outerHeight,
@@ -423,7 +456,7 @@ const GanttElastic: React.FC<GanttElasticProps> = ({
       rowsHeight = options.maxHeight;
     }
     const scrollBarHeight = getScrollBarHeight();
-    const height =
+    const clientHeight =
       getHeight(
         maxRows,
         options.row.height,
@@ -453,7 +486,7 @@ const GanttElastic: React.FC<GanttElasticProps> = ({
 
     return {
       visibleTasks,
-      height,
+      clientHeight,
       allVisibleTasksHeight,
       outerHeight,
       rowsHeight,
@@ -778,7 +811,8 @@ const GanttElastic: React.FC<GanttElasticProps> = ({
         getTask,
         visibleTasks,
         allTasks,
-        height,
+        chartWidth,
+        clientHeight,
         clientWidth,
         outerHeight,
         rowsHeight,

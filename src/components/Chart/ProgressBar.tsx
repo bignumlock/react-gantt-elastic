@@ -4,9 +4,10 @@ import React, { useContext, useMemo } from "react";
 
 export interface ProgressBarProps {
   task: Task;
+  clipPath: string;
 }
 
-const ProgressBar: React.FC<ProgressBarProps> = ({ task }) => {
+const ProgressBar: React.FC<ProgressBarProps> = ({ task, ...props }) => {
   const { style, options } = useContext(GanttElasticContext);
 
   return useMemo(() => {
@@ -23,6 +24,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ task }) => {
           ...style["chart-row-progress-bar-wrapper"],
           ...task.style["chart-row-progress-bar-wrapper"]
         }}
+        {...props}
       >
         <defs>
           <pattern

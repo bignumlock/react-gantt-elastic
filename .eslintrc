@@ -7,6 +7,11 @@
     "project": "./tsconfig.json"
   },
   "env": {
+    "node": true,
+    "es6": true,
+    "mocha": true,
+    "jest": true,
+    "jasmine": true,
     "browser": true,
     "commonjs": true
   },
@@ -22,7 +27,7 @@
       "version": "detect"
     }
   },
-  "plugins": ["react-hooks", "@typescript-eslint", "react"],
+  "plugins": ["react", "react-hooks", "@typescript-eslint"],
   "globals": {
     "__static": true
   },

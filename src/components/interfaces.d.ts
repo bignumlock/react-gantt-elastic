@@ -187,7 +187,7 @@ export interface CalendarOption {
   };
 }
 export interface State {
-  width: number;
+  // width: number;
   // height: number;
   // clientWidth: number;
   // outerHeight: number;
