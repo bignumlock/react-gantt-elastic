@@ -8,14 +8,19 @@ import { GanttElasticTask } from "./types";
 
 // just helper to get current dates
 function getDate(hours: number) {
-  const currentDate = new Date();
-  const currentYear = currentDate.getFullYear();
-  const currentMonth = currentDate.getMonth() + 1;
-  const currentDay = currentDate.getDate();
-  const timeStamp = new Date(
-    `${currentYear}-${currentMonth}-${currentDay} 00:00:00`
-  ).getTime();
-  return new Date(timeStamp + hours * 60 * 60 * 1000).getTime();
+  // const currentDate = new Date();
+  // const currentYear = currentDate.getFullYear();
+  // const currentMonth = currentDate.getMonth() + 1;
+  // const currentDay = currentDate.getDate();
+  // const timeStamp = new Date(
+  //   `${currentYear}-${currentMonth}-${currentDay} 00:00:00`
+  // ).getTime();
+  return (
+    dayjs()
+      .startOf("day")
+      .valueOf() +
+    hours * 60 * 60 * 1000
+  );
 }
 
 const tasks = [
@@ -197,7 +202,7 @@ const options = {
   //   after: 20
   // },
   times: {
-    timeZoom: 5,
+    timeZoom: 10,
     firstTime: dayjs("2020/03/10").valueOf()
     // lastTime: dayjs("2020/03/14").valueOf()
   },
@@ -292,52 +297,46 @@ const options = {
 
 const ctx = document.createElement("canvas").getContext("2d");
 ReactDOM.render(
-  <div
+  <GanttElastic
+    tasks={tasks}
+    options={options}
     style={{
-      height: "80vh"
+      height: "100%"
     }}
-  >
-    <GanttElastic
-      tasks={tasks}
-      options={options}
-      style={{
-        height: "100%"
-      }}
-      // firstTime={dayjs("2020/03/07")
-      //   .startOf("day")
-      //   .valueOf()}
-      // lastTime={dayjs("2020/03/09")
-      //   .endOf("day")
-      //   .valueOf()}
-    ></GanttElastic>
-    {/* <GanttElasticContext.Provider
-      value={{
-        style: getStyle(),
-        ctx,
-        refs: {},
-        state: {
-          ...defaultOptions,
-          times: {
-            ...defaultOptions.times,
-            firstTime: dayjs("2020/03/04")
-              .startOf("day")
-              .valueOf(),
-            lastTime: dayjs("2020/03/09")
-              .endOf("day")
-              .valueOf()
-          },
-          taskList: {
-            ...defaultOptions.taskList
-            // columns: initializeColumns(options.taskList.columns)
-          }
-        },
-        options: _.merge({}, initializeOptions())
-      }}
-    >
-       <TaskListHeader></TaskListHeader>
-      <Chart></Chart> 
-      <MainView tasks={tasks}></MainView>
-    </GanttElasticContext.Provider> */}
-  </div>,
+    // firstTime={dayjs("2020/03/07")
+    //   .startOf("day")
+    //   .valueOf()}
+    // lastTime={dayjs("2020/03/09")
+    //   .endOf("day")
+    //   .valueOf()}
+  ></GanttElastic>,
+  //  <GanttElasticContext.Provider
+  //   value={{
+  //     style: getStyle(),
+  //     ctx,
+  //     refs: {},
+  //     state: {
+  //       ...defaultOptions,
+  //       times: {
+  //         ...defaultOptions.times,
+  //         firstTime: dayjs("2020/03/04")
+  //           .startOf("day")
+  //           .valueOf(),
+  //         lastTime: dayjs("2020/03/09")
+  //           .endOf("day")
+  //           .valueOf()
+  //       },
+  //       taskList: {
+  //         ...defaultOptions.taskList
+  //         // columns: initializeColumns(options.taskList.columns)
+  //       }
+  //     },
+  //     options: _.merge({}, initializeOptions())
+  //   }}
+  // >
+  //    <TaskListHeader></TaskListHeader>
+  //   <Chart></Chart>
+  //   <MainView tasks={tasks}></MainView>
+  // </GanttElasticContext.Provider>
   document.getElementById("root")
 );

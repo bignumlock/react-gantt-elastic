@@ -33,15 +33,14 @@ const MainView: React.FC<MainViewProps> = () => {
     style,
     refs,
     options,
-    width: fullWidth,
-    height,
+    chartWidth,
+    clientHeight,
     clientWidth,
     rowsHeight,
     scrollBarHeight,
     allVisibleTasksHeight,
     taskList,
     calendar
-    // scroll
   } = useContext(GanttElasticContext);
 
   const [scroll] = useState({ scrolling: false });
@@ -249,7 +248,7 @@ const MainView: React.FC<MainViewProps> = () => {
           className="gantt-elastic__main-container-wrapper"
           style={{
             ...style["main-container-wrapper"],
-            height: height + "px"
+            height: clientHeight + "px"
           }}
         >
           <div
@@ -257,7 +256,7 @@ const MainView: React.FC<MainViewProps> = () => {
             style={{
               ...style["main-container"],
               width: clientWidth + "px",
-              height: height + "px"
+              height: clientHeight + "px"
             }}
             ref={mainViewRef}
           >
@@ -274,7 +273,7 @@ const MainView: React.FC<MainViewProps> = () => {
                   style={{
                     ...style["task-list-container"],
                     width: taskList.finalWidth + "px",
-                    height: height + "px"
+                    height: clientHeight + "px"
                   }}
                 >
                   <TaskList></TaskList>
@@ -333,7 +332,7 @@ const MainView: React.FC<MainViewProps> = () => {
             className="gantt-elastic__chart-scroll--horizontal"
             style={{
               height: "1px",
-              width: fullWidth + "px"
+              width: chartWidth + "px"
             }}
           ></div>
         </div>
@@ -347,7 +346,7 @@ const MainView: React.FC<MainViewProps> = () => {
       chartMouseUp,
       chartWheel,
       clientWidth,
-      height,
+      clientHeight,
       mouseMove,
       mouseUp,
       onHorizontalScroll,
@@ -358,7 +357,7 @@ const MainView: React.FC<MainViewProps> = () => {
       scrollBarHeight,
       style,
       taskList.finalWidth,
-      fullWidth
+      chartWidth
     ]
   );
 };

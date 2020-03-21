@@ -1,9 +1,5 @@
 import dayjs from "dayjs";
-import {
-  DateFormat,
-  Task,
-  TaskListColumnOption
-} from "./components/interfaces";
+import { Task, TaskListColumnOption } from "./components/interfaces";
 
 declare interface DynamicStyle {
   [key: string]: {

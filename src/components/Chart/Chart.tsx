@@ -5,6 +5,8 @@ import Calendar from "./Calendar/Calendar";
 import DaysHighlight from "./DaysHighlight";
 import DependencyLines from "./DependencyLines";
 import Grid from "./Grid";
+import Milestone from "./Row/Milestone";
+import Project from "./Row/Project";
 import Task from "./Row/Task";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -16,25 +18,25 @@ const Chart: React.FC<ChartProps> = () => {
     visibleTasks,
     refs,
     calendar,
-    height,
-    width: fullWidth,
+    clientHeight,
+    chartWidth,
     rowsHeight,
     allVisibleTasksHeight,
     options
   } = useContext(GanttElasticContext);
 
-  const divChart = useRef(null);
-  const chartCalendarContainer = useRef(null);
-  const chartGraphContainer = useRef(null);
-  const chartGraph = useRef(null);
-  const chartGraphSvg = useRef(null);
+  const chartRef = useRef(null);
+  const chartCalendarContainerRef = useRef(null);
+  const chartGraphContainerRef = useRef(null);
+  const chartGraphRef = useRef(null);
+  const chartGraphSvgRef = useRef(null);
 
   useEffect(() => {
-    refs.chart = divChart;
-    refs.chartCalendarContainer = chartCalendarContainer;
-    refs.chartGraphContainer = chartGraphContainer;
-    refs.chartGraph = chartGraph;
-    refs.chartGraphSvg = chartGraphSvg;
+    refs.chart = chartRef;
+    refs.chartCalendarContainer = chartCalendarContainerRef;
+    refs.chartGraphContainer = chartGraphContainerRef;
+    refs.chartGraph = chartGraphRef;
+    refs.chartGraphSvg = chartGraphSvgRef;
   }, [refs]);
 
   const renderTasks = useMemo(() => {
@@ -44,10 +46,10 @@ const Chart: React.FC<ChartProps> = () => {
         style={{
           ...style["chart-graph-svg"]
         }}
-        ref={chartGraphSvg}
+        ref={chartGraphSvgRef}
         x="0"
         y="0"
-        width={fullWidth + "px"}
+        width={chartWidth + "px"}
         height={allVisibleTasksHeight + "px"}
         xmlns="http://www.w3.org/2000/svg"
       >
@@ -63,24 +65,26 @@ const Chart: React.FC<ChartProps> = () => {
               }}
               key={task.id}
             >
-              <Task task={task}></Task>
+              {task.type === "task" && <Task task={task}></Task>}
+              {task.type === "project" && <Project task={task}></Project>}
+              {task.type === "milestone" && <Milestone task={task}></Milestone>}
             </g>
           );
         })}
       </svg>
     );
-  }, [style, fullWidth, allVisibleTasksHeight, visibleTasks]);
+  }, [style, chartWidth, allVisibleTasksHeight, visibleTasks]);
 
   return useMemo(
     () => (
       <div
         className="gantt-elastic__chart"
         style={{ ...style["chart"] }}
-        ref={divChart}
+        ref={chartRef}
       >
         <div
           className="gantt-elastic__chart-calendar-container"
-          ref={chartCalendarContainer}
+          ref={chartCalendarContainerRef}
           style={{
             ...style["chart-calendar-container"],
             height: calendar.height + "px",
@@ -91,22 +95,22 @@ const Chart: React.FC<ChartProps> = () => {
         </div>
         <div
           className="gantt-elastic__chart-graph-container"
-          ref={chartGraphContainer}
+          ref={chartGraphContainerRef}
           style={{
             ...style["chart-graph-container"],
-            height: height - calendar.height + "px"
+            height: clientHeight - calendar.height + "px"
           }}
         >
           <div
             style={{
               ...style["chart-area"],
-              width: fullWidth + "px",
+              width: chartWidth + "px",
               height: rowsHeight + "px"
             }}
           >
             <div
               className="gantt-elastic__chart-graph"
-              ref={chartGraph}
+              ref={chartGraphRef}
               style={{
                 ...style["chart-graph"],
                 height: "100%"
@@ -120,12 +124,12 @@ const Chart: React.FC<ChartProps> = () => {
     ),
     [
       calendar.height,
-      height,
+      clientHeight,
       options.calendar.gap,
       renderTasks,
       rowsHeight,
       style,
-      fullWidth
+      chartWidth
     ]
   );
 };

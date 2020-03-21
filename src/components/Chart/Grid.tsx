@@ -15,17 +15,21 @@ const Grid: React.FC<ChartProps> = () => {
     allTasks,
     times,
     scroll,
-    width: fullWidth,
+    chartWidth,
     allVisibleTasksHeight
   } = useContext(GanttElasticContext);
   const allTaskCount = allTasks.length;
   // refs
-  const svgChart = useRef(null);
+  const svgChartRef = useRef(null);
+
   useEffect(() => {
-    refs.svgChart = svgChart;
+    refs.svgChart = svgChartRef;
   }, [refs]);
 
-  const strokeWidth = parseInt(`${style["grid-line-vertical"]["strokeWidth"]}`);
+  const strokeWidth = useMemo(
+    () => parseInt(`${style["grid-line-vertical"]["strokeWidth"]}`),
+    [style]
+  );
 
   /**
    * Generate vertical lines of the grid
@@ -134,10 +138,10 @@ const Grid: React.FC<ChartProps> = () => {
       <svg
         className="gantt-elastic__grid-lines-wrapper"
         style={{ ...style["grid-lines-wrapper"] }}
-        ref={svgChart}
+        ref={svgChartRef}
         x="0"
         y="0"
-        width={fullWidth}
+        width={chartWidth}
         height={allVisibleTasksHeight}
         xmlns="http//www.w3.org/2000/svg"
       >
@@ -166,7 +170,7 @@ const Grid: React.FC<ChartProps> = () => {
       timeLinePosition.x,
       timeLinePosition.y1,
       timeLinePosition.y2,
-      fullWidth
+      chartWidth
     ]
   );
 };

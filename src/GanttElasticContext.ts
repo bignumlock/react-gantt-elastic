@@ -29,8 +29,8 @@ export default React.createContext<{
   times: ImmutableObject<TimeOption>;
   taskList: ImmutableObject<TaskListOption>;
   calendar: ImmutableObject<CalendarOption>;
-  width: number;
-  height: number;
+  chartWidth: number;
+  clientHeight: number;
   clientWidth: number;
   outerHeight: number;
   rowsHeight: number;
@@ -41,8 +41,8 @@ export default React.createContext<{
   allTasks: [],
   visibleTasks: [],
   style: {},
-  width: 0,
-  height: 0,
+  chartWidth: 0,
+  clientHeight: 0,
   clientWidth: 0,
   outerHeight: 0,
   rowsHeight: 0,
