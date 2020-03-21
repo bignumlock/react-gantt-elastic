@@ -1,20 +1,10 @@
-/* eslint-disable react/jsx-no-target-blank */
 import dayjs from "dayjs";
 import React from "react";
 import ReactDOM from "react-dom";
 import GanttElastic from "./GanttElastic";
 import "./style.css";
-import { GanttElasticTask } from "./types";
 
-// just helper to get current dates
-function getDate(hours: number) {
-  // const currentDate = new Date();
-  // const currentYear = currentDate.getFullYear();
-  // const currentMonth = currentDate.getMonth() + 1;
-  // const currentDay = currentDate.getDate();
-  // const timeStamp = new Date(
-  //   `${currentYear}-${currentMonth}-${currentDay} 00:00:00`
-  // ).getTime();
+function getDate(hours: number): number {
   return (
     dayjs()
       .startOf("day")
@@ -177,38 +167,17 @@ const tasks = [
   }
 ];
 
-// const types = ["project", "milestone", "task"];
-// const rows = 200;
-// for (let i = -rows; i < rows; i++) {
-//   tasks.push({
-//     id: i + rows + 100,
-//     label: "task " + (i + rows + 1),
-//     user: "test",
-//     start: getDate(24 * i),
-//     duration: 24 * 60 * 60 * 1000,
-//     progress: Math.floor(Math.random() * 100),
-//     type: types[Math.floor(Math.random() * 3)]
-//   });
-// }
-
 const options = {
   title: {
     label: "Your project title as html (link or whatever...)",
     html: false
   },
-  // scope: {
-  //   //*
-  //   before: 10,
-  //   after: 20
-  // },
   times: {
     timeZoom: 10,
     firstTime: dayjs("2020/03/10").valueOf()
-    // lastTime: dayjs("2020/03/14").valueOf()
   },
   row: { height: 16 },
   taskList: {
-    // display: false,
     columns: [
       {
         id: 1,
@@ -233,8 +202,7 @@ const options = {
       {
         id: 4,
         label: "Start",
-        value: (task: GanttElasticTask) =>
-          dayjs(task.start).format("YYYY-MM-DD"),
+        value: task => dayjs(task.start).format("YYYY-MM-DD"),
         width: 78
       },
       {
@@ -261,41 +229,36 @@ const options = {
     ]
   }
   // locale: {
-  //   code: "en",
-  //   Now: "Now",
-  //   "X-Scale": "Zoom-X",
-  //   "Y-Scale": "Zoom-Y",
-  //   "Task list width": "Task list",
-  //   "Before/After": "Expand",
-  //   "Display task list": "Task list"
+  //   name: "pl", // name String
+  //   weekdays: "Poniedziałek_Wtorek_Środa_Czwartek_Piątek_Sobota_Niedziela".split(
+  //     "_"
+  //   ), // weekdays Array
+  //   weekdaysShort: "Pon_Wto_Śro_Czw_Pią_Sob_Nie".split("_"), // OPTIONAL, short weekdays Array, use first three letters if not provided
+  //   weekdaysMin: "Pn_Wt_Śr_Cz_Pt_So_Ni".split("_"), // OPTIONAL, min weekdays Array, use first two letters if not provided
+  //   months: "Styczeń_Luty_Marzec_Kwiecień_Maj_Czerwiec_Lipiec_Sierpień_Wrzesień_Październik_Listopad_Grudzień".split(
+  //     "_"
+  //   ), // months Array
+  //   monthsShort: "Sty_Lut_Mar_Kwi_Maj_Cze_Lip_Sie_Wrz_Paź_Lis_Gru".split("_"), // OPTIONAL, short months Array, use first three letters if not provided
+  //   ordinal: n => `${n}`, // ordinal Function (number) => return number + output
+  //   relativeTime: {
+  //     // relative time format strings, keep %s %d as the same
+  //     future: "za %s", // e.g. in 2 hours, %s been replaced with 2hours
+  //     past: "%s temu",
+  //     s: "kilka sekund",
+  //     m: "minutę",
+  //     mm: "%d minut",
+  //     h: "godzinę",
+  //     hh: "%d godzin", // e.g. 2 hours, %d been replaced with 2
+  //     d: "dzień",
+  //     dd: "%d dni",
+  //     M: "miesiąc",
+  //     MM: "%d miesięcy",
+  //     y: "rok",
+  //     yy: "%d lat"
+  //   }
   // }
-  /*locale:{
-        name: 'pl', // name String
-        weekdays: 'Poniedziałek_Wtorek_Środa_Czwartek_Piątek_Sobota_Niedziela'.split('_'), // weekdays Array
-        weekdaysShort: 'Pon_Wto_Śro_Czw_Pią_Sob_Nie'.split('_'), // OPTIONAL, short weekdays Array, use first three letters if not provided
-        weekdaysMin: 'Pn_Wt_Śr_Cz_Pt_So_Ni'.split('_'), // OPTIONAL, min weekdays Array, use first two letters if not provided
-        months: 'Styczeń_Luty_Marzec_Kwiecień_Maj_Czerwiec_Lipiec_Sierpień_Wrzesień_Październik_Listopad_Grudzień'.split('_'), // months Array
-        monthsShort: 'Sty_Lut_Mar_Kwi_Maj_Cze_Lip_Sie_Wrz_Paź_Lis_Gru'.split('_'), // OPTIONAL, short months Array, use first three letters if not provided
-        ordinal: n => `${n}`, // ordinal Function (number) => return number + output
-        relativeTime: { // relative time format strings, keep %s %d as the same
-          future: 'za %s', // e.g. in 2 hours, %s been replaced with 2hours
-          past: '%s temu',
-          s: 'kilka sekund',
-          m: 'minutę',
-          mm: '%d minut',
-          h: 'godzinę',
-          hh: '%d godzin', // e.g. 2 hours, %d been replaced with 2
-          d: 'dzień',
-          dd: '%d dni',
-          M: 'miesiąc',
-          MM: '%d miesięcy',
-          y: 'rok',
-          yy: '%d lat'
-        }
-      }*/
 };
 
-const ctx = document.createElement("canvas").getContext("2d");
 ReactDOM.render(
   <GanttElastic
     tasks={tasks}
@@ -303,40 +266,6 @@ ReactDOM.render(
     style={{
       height: "100%"
     }}
-    // firstTime={dayjs("2020/03/07")
-    //   .startOf("day")
-    //   .valueOf()}
-    // lastTime={dayjs("2020/03/09")
-    //   .endOf("day")
-    //   .valueOf()}
   ></GanttElastic>,
-  //  <GanttElasticContext.Provider
-  //   value={{
-  //     style: getStyle(),
-  //     ctx,
-  //     refs: {},
-  //     state: {
-  //       ...defaultOptions,
-  //       times: {
-  //         ...defaultOptions.times,
-  //         firstTime: dayjs("2020/03/04")
-  //           .startOf("day")
-  //           .valueOf(),
-  //         lastTime: dayjs("2020/03/09")
-  //           .endOf("day")
-  //           .valueOf()
-  //       },
-  //       taskList: {
-  //         ...defaultOptions.taskList
-  //         // columns: initializeColumns(options.taskList.columns)
-  //       }
-  //     },
-  //     options: _.merge({}, initializeOptions())
-  //   }}
-  // >
-  //    <TaskListHeader></TaskListHeader>
-  //   <Chart></Chart>
-  //   <MainView tasks={tasks}></MainView>
-  // </GanttElasticContext.Provider>
   document.getElementById("root")
 );
