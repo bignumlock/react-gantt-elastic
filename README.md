@@ -1,4 +1,4 @@
-<h1>Gantt-elastic(Alpha) - Javascript Gantt Chart (editable, responsive)</h1>
+<h1>Gantt-elastic(Alpha) - Javascript Gantt Chart(editable, responsive)</h1>
 <h2>Javascript Gantt Chart for React, jquery, vanilla js and other frameworks</h2>
 
 <br>
